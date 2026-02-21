@@ -180,6 +180,7 @@ public class StartupWildbook implements ServletContextListener {
         }
         // TODO: set strategy for the following (genericize starting "all" consumers, make configurable, move to WildbookIAM.startup, move to plugins, or other)
         startIAQueues(context);
+        TwitterBot.startServices(context);
         MetricsBot.startServices(context);
         AcmIdBot.startServices(context);
         AnnotationLite.startup(sContext, context);
@@ -409,6 +410,7 @@ public class StartupWildbook implements ServletContextListener {
         }
         AnnotationLite.cleanup(sContext, context);
         QueueUtil.cleanup();
+        TwitterBot.cleanup();
         MetricsBot.cleanup();
         AcmIdBot.cleanup();
         IndexingManagerFactory.getIndexingManager().shutdown();
@@ -422,21 +424,24 @@ public class StartupWildbook implements ServletContextListener {
 
     /**
      * Try loading the matchGraph from disk cache. If the cache exists and loads
-     * successfully, use it directly. Otherwise fall back to the full DB rebuild
-     * via MatchGraphCreationThread.
+     * successfully, rebuild the TETRA index from it (fast). Otherwise fall back
+     * to the full DB rebuild via MatchGraphCreationThread.
      */
     public static void loadMatchGraphOrRebuild(ServletContext sContext, String context) {
         try {
             String dataDir = CommonConfiguration.getDataDirectory(sContext, context).getAbsolutePath();
             String cacheFile = GridManager.getCacheFilePath(dataDir);
             if (new File(cacheFile).exists() && GridManager.cacheRead(cacheFile)) {
-                System.out.println("INFO: matchGraph loaded from cache.");
+                System.out.println("INFO: matchGraph loaded from cache, building TETRA index...");
+                ThreadPoolExecutor es = SharkGridThreadExecutorService.getExecutorService();
+                es.execute(new org.ecocean.grid.tetra.TetraIndexCreationThread());
                 return;
             }
         } catch (Exception e) {
             System.out.println("WARNING: Could not load matchGraph cache, rebuilding from DB: " +
                 e.getMessage());
         }
+        // Fall back to full DB rebuild (which also indexes TETRA incrementally)
         createMatchGraph();
     }
 

@@ -280,7 +280,7 @@ if (allSpotMAs != null) {
 
 		 				//System.out.println("     uploadedFile exists!");
 		 				
-		 				Dimension imageDimensions = Util.hackSanselanGetImageSize(uploadedFile, null);
+		 				Dimension imageDimensions = org.apache.sanselan.Sanselan.getImageSize(uploadedFile);
 		 				
 
 		 				//iInfo.setInput(new FileInputStream(uploadedFile));
@@ -317,7 +317,7 @@ if (allSpotMAs != null) {
 						if((uploadedRightFile.exists())&&uploadedRightFile.isFile()&&(uploadedRightFile.length()>0)&&(enc.getNumRightSpots()>0)) {
 									
 									//iInfo=new ImageInfo();
-									Dimension imageDimensions = Util.hackSanselanGetImageSize(uploadedRightFile, null);
+									Dimension imageDimensions = org.apache.sanselan.Sanselan.getImageSize(uploadedRightFile);
 		 				
 
 									//iInfo.setInput(new FileInputStream(uploadedRightFile));
@@ -527,7 +527,7 @@ $(document).ready(function() {
   					<a href="http://www.blackwell-synergy.com/doi/abs/10.1111/j.1365-2664.2006.01273.x?journalCode=jpe">I3S</a> algorithms.
 
     				<div id="formDiv">
-      					<form name="formSharkGrid" id="formSharkGrid" method="post" action="../GrothMatch">
+      					<form name="formSharkGrid" id="formSharkGrid" method="post" action="../HybridMatch">
       						<input name="encounterNumber" type="hidden" value="<%=encNum%>" />
         						<table width="200px">
           							<tr>
