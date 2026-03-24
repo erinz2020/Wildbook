@@ -607,7 +607,7 @@ const ImageCard = observer(({ store = {} }) => {
           {tip.text}
         </Tooltip>
 
-        {store.encounterData?.mediaAssets.length > 0 && (
+        {store.encounterData?.mediaAssets?.length > 0 && (
           <div style={{ position: "absolute", top: 5, right: 5 }}>
             <FullscreenIcon />
           </div>
@@ -615,7 +615,7 @@ const ImageCard = observer(({ store = {} }) => {
       </div>
 
       {store.access === "write" &&
-        store.encounterData?.mediaAssets.length > 0 && (
+        store.encounterData?.mediaAssets?.length > 0 && (
           <div
             className="d-flex flex-row justify-content-between align-items-center w-100 align-items-center"
             style={{
@@ -764,7 +764,7 @@ const ImageCard = observer(({ store = {} }) => {
         className="d-flex flex-wrap align-items-center mt-2"
         style={{ gap: 8, overflowY: "auto", maxHeight: 200 }}
       >
-        {store.encounterData?.mediaAssets.map((asset, index) => (
+        {store.encounterData?.mediaAssets?.map((asset, index) => (
           <img
             key={index}
             src={asset.url}
