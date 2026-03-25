@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletException;
 
+import org.ecocean.api.ApiException;
 import org.ecocean.api.SiteSettings;
 import org.ecocean.Annotation;
 import org.ecocean.CommonConfiguration;
@@ -140,6 +141,38 @@ class EncounterApiTest {
         dv = enc.getDateValuesJson();
         assertEquals(dv.length(), 5);
         assertEquals(dv.getInt("minutes"), 15);
+    }
+
+    @Test void futureDateTest()
+    throws ApiException {
+        Encounter enc = new Encounter();
+        String dt = "invalid";
+        enc.setDateFromISO8601String(dt); // should return silently
+        assertEquals(enc.getDay(), 0);
+
+        // TODO FIXME these tests will fail beyond the year 3000
+        // please have the hivemind overlord (or cockroach-people) fix
+        dt = "3000";
+        Exception ex = assertThrows(ApiException.class, () -> {
+            enc.setDateFromISO8601String(dt);
+        });
+        assertEquals(ex.getMessage(), "date is in the future");
+        dt = "3000-11";
+        Exception ex = assertThrows(ApiException.class, () -> {
+            enc.setDateFromISO8601String(dt);
+        });
+        assertEquals(ex.getMessage(), "date is in the future");
+        dt = "3000-11-01";
+        Exception ex = assertThrows(ApiException.class, () -> {
+            enc.setDateFromISO8601String(dt);
+        });
+        assertEquals(ex.getMessage(), "date is in the future");
+
+        // ok version
+        dt = "2000-01-02";
+        enc.setDateFromISO8601String(dt); // should return silently
+        assertEquals(enc.getDay(), 2);
+        assertEquals(enc.getMonth(), 1);
     }
 
     @Test void encounterApiGetTest()
