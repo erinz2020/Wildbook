@@ -158,12 +158,12 @@ class EncounterApiTest {
         });
         assertEquals(ex.getMessage(), "date is in the future");
         dt = "3000-11";
-        Exception ex = assertThrows(ApiException.class, () -> {
+        ex = assertThrows(ApiException.class, () -> {
             enc.setDateFromISO8601String(dt);
         });
         assertEquals(ex.getMessage(), "date is in the future");
         dt = "3000-11-01";
-        Exception ex = assertThrows(ApiException.class, () -> {
+        ex = assertThrows(ApiException.class, () -> {
             enc.setDateFromISO8601String(dt);
         });
         assertEquals(ex.getMessage(), "date is in the future");
