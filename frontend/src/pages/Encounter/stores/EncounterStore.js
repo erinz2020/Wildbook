@@ -104,6 +104,8 @@ class EncounterStore {
   _projectsSection = false;
   _selectedProjects = null;
 
+  _spotMappingSection = false;
+
   _sectionDrafts = new Map(
     Object.keys(SECTION_FIELD_PATHS).map((name) => [name, {}]),
   );
@@ -515,6 +517,13 @@ class EncounterStore {
   }
   setProjectsSection(isEnabled) {
     this._projectsSection = isEnabled;
+  }
+
+  get spotMappingSection() {
+    return this._spotMappingSection;
+  }
+  setSpotMappingSection(isEnabled) {
+    this._spotMappingSection = isEnabled;
   }
 
   get selectedProjects() {
