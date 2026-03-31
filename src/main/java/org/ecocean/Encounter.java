@@ -1430,7 +1430,7 @@ public class Encounter extends Base implements java.io.Serializable {
         System.out.println("trying spotImageAsMediaAsset with file=" + fullPath.toString());
         org.json.JSONObject sp = astore.createParameters(fullPath);
         sp.put("key", this.subdir() + "/spotImage-" + spotImageFileName);
-                                                                          // others?
+        // others?
         MediaAsset ma = astore.find(sp, myShepherd);
         if (ma == null) {
             System.out.println("did not find MediaAsset for params=" + sp + "; creating one?");
@@ -1640,6 +1640,17 @@ public class Encounter extends Base implements java.io.Serializable {
 
     public void setRightReferenceSpots(ArrayList<SuperSpot> rightReferenceSpots) {
         this.rightReferenceSpots = rightReferenceSpots;
+    }
+
+    // this is for jsonForApiGet()
+    public org.json.JSONObject spotMappingJsonForApiGet() {
+        org.json.JSONObject rtn = new org.json.JSONObject();
+        if (!CommonConfiguration.useSpotPatternRecognition("context0")) return rtn; // not supported
+        rtn.put("numberLeftSpots", getNumSpots());
+        rtn.put("numberRightSpots", getNumRightSpots());
+        rtn.put("hasLeftSpots", getNumSpots() > 0);
+        rtn.put("hasRightSpots", getNumRightSpots() > 0);
+        return rtn;
     }
 
     // @return the variance for population
@@ -4763,6 +4774,7 @@ public class Encounter extends Base implements java.io.Serializable {
         rtn.put("researcherComments", getRComments());
         rtn.put("groupRole", getGroupRole());
         rtn.put("identificationRemarks", getIdentificationRemarks());
+        rtn.put("spotMapping", spotMappingJsonForApiGet());
 
         // the user-listy things
         rtn.put("submitters",
