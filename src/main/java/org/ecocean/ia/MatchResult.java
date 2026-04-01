@@ -316,8 +316,12 @@ public class MatchResult implements java.io.Serializable {
         payload.put("image2_uris", new JSONArray(new String[] { ma2.webURL().toString() }));
         payload.put("theta1", new JSONArray(new Double[] { ann1.getTheta() }));
         payload.put("theta2", new JSONArray(new Double[] { ann2.getTheta() }));
-        payload.put("bb1", new JSONArray(ann1.getBbox()));
-        payload.put("bb2", new JSONArray(ann2.getBbox()));
+        // this needs an array of array(s)
+        JSONArray tmpArr = new JSONArray();
+        tmpArr.put(0, ann1.getBbox());
+        payload.put("bb1", tmpArr);
+        tmpArr.put(0, ann2.getBbox());
+        payload.put("bb2", tmpArr);
 
         // get the image data from pairx endpoint
         JSONObject res = null;
