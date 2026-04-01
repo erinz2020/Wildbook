@@ -329,7 +329,7 @@ public class MatchResult implements java.io.Serializable {
         try {
             pairxUrl = _getPairxUrl(enc.getTaxonomyString());
             if (pairxUrl == null) return null;
-            res = RestClient.post(pairxUrl, payload);
+            res = RestClient.postJSON(pairxUrl, payload, null);
         } catch (Exception ex) {
             System.out.println("[ERROR] createInspectionPairxAsset() POST to " + pairxUrl +
                 " failed: " + ex + "; payload=" + payload);
