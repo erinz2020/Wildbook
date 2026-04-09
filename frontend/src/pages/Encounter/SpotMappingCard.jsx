@@ -39,8 +39,6 @@ export const SpotMappingCard = observer(({ store = {} }) => {
   const cyan700 = themeColor?.wildMeColors?.cyan700 || "#00b7e3";
 
   const renderExtractedSpotRow = (side, count) => {
-    const isRight = side === "right";
-
     return (
       <div
         key={side}
@@ -67,9 +65,10 @@ export const SpotMappingCard = observer(({ store = {} }) => {
               border: "none",
               cursor: "pointer",
             }}
-            onClick={(e) => {
+            onClick={async (e) => {
               e.stopPropagation();
-              store?.removeExtractedSpots?.(isRight);
+              await store?.removeExtractedSpots?.(side);
+              window.location.reload();
             }}
           >
             <RemoveIcon />
@@ -126,45 +125,6 @@ export const SpotMappingCard = observer(({ store = {} }) => {
 
       <ContainerWithSpinner loading={loading}>
         <div>
-          {isWrite && (
-            <>
-              {/* <div className="mb-4">
-                <div className="mb-2" style={{ fontWeight: "bold" }}>
-                  <FormattedMessage
-                    id="SPOT_MAPPING"
-                    defaultMessage="Spot Mapping"
-                  />
-                </div>
-                <p className="mb-3">
-                  <FormattedMessage
-                    id="SPOT_MAPPING_DESCRIPTION"
-                    defaultMessage="If you are not satisfied by the spot map, re-do spot mapping."
-                  />
-                </p>
-                <MainButton
-                  onClick={() => store?.startSpotMapping?.()}
-                  noArrow={true}
-                  color="white"
-                  backgroundColor={cyan700}
-                  borderColor={cyan700}
-                >
-                  <FormattedMessage
-                    id="START_SPOT_MAPPING"
-                    defaultMessage="Start Spot Mapping"
-                  />
-                </MainButton>
-              </div> */}
-
-              <div
-                style={{
-                  width: "100%",
-                  borderBottom: "1px solid #ccc",
-                  marginBottom: "20px",
-                }}
-              />
-            </>
-          )}
-
           <div className="mb-4">
             <div className="mb-2" style={{ fontWeight: "bold" }}>
               <FormattedMessage
@@ -284,9 +244,9 @@ export const SpotMappingCard = observer(({ store = {} }) => {
                         type="radio"
                         name="spot-mapping-side"
                         checked={selectedSide === "right"}
-                        onChange={() =>
-                          store?.setSelectedSpotMappingSide?.("right")
-                        }
+                        onChange={() => {
+                          store?.setSelectedSpotMappingSide?.("right");
+                        }}
                         style={{
                           width: 18,
                           height: 18,
@@ -299,7 +259,9 @@ export const SpotMappingCard = observer(({ store = {} }) => {
                 </div>
 
                 <MainButton
-                  onClick={() => store?.startSpotMappingScan?.(selectedSide)}
+                  onClick={() => {
+                    store?.startSpotMappingScan?.(selectedSide);
+                  }}
                   noArrow={true}
                   color="white"
                   backgroundColor={cyan700}
