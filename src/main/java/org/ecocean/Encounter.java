@@ -1653,6 +1653,14 @@ public class Encounter extends Base implements java.io.Serializable {
         rtn.put("hasLeftSpots", getNumSpots() > 0);
         rtn.put("hasRightSpots", getNumRightSpots() > 0);
         rtn.put("hasSpots", (getNumSpots() + getNumRightSpots()) > 0);
+
+        // check where results xml is stored (per spotMappingAlgorith.jsp)
+        File ddir = Util.getDataDir();
+        String encDir = dir(ddir.toString());
+        rtn.put("resultsGrothLeft", new File(encDir, "lastFullScan.xml").exists());
+        rtn.put("resultsGrothRight", new File(encDir, "lastFullRightScan.xml").exists());
+        rtn.put("resultsI3SLeft", new File(encDir, "lastFullI3SScan.xml").exists());
+        rtn.put("resultsI3SRight", new File(encDir, "lastFullRightI3SScan.xml").exists());
         return rtn;
     }
 
