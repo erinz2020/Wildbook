@@ -563,7 +563,7 @@
     "OVERVIEW": "Overview",
     "MORE_DETAILS": "More Details",
     "TRACKING_AND_MEASUREMENTS": "Tracking and Measurements",
-    "SPOT_MAPPING_ALGORITHMS": "Spot Mapping Algorithms ({algorithms})",
+    "SPOT_MAPPING_ALGORITHMS": "Spot Mapping Algorithms",
     "EXTRACTED_SPOTS": "Extracted Spots",
     "REMOVE_EXTRACTED_SPOTS": "Remove extracted spots",
     "PATTERN_MATCHING_RESULTS": "Pattern Matching Results",

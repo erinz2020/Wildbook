@@ -147,7 +147,7 @@ export const SpotMappingCard = observer(({ store = {} }) => {
             {resultsGrothLeft && (
               <div className="mb-1">
                 <a
-                  href={`scanEndApplet.jsp?writeThis=true&number=${encounterNumber}&taskID=scanL${encounterNumber}`}
+                  href={`/encounters/scanEndApplet.jsp?writeThis=true&number=${encounterNumber}&taskID=scanL${encounterNumber}`}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -159,7 +159,7 @@ export const SpotMappingCard = observer(({ store = {} }) => {
             {resultsGrothRight && (
               <div className="mb-1">
                 <a
-                  href={`scanEndApplet.jsp?writeThis=true&number=${encounterNumber}&taskID=scanR${encounterNumber}&rightSide=true`}
+                  href={`/encounters/scanEndApplet.jsp?writeThis=true&number=${encounterNumber}&taskID=scanR${encounterNumber}&rightSide=true`}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -171,7 +171,7 @@ export const SpotMappingCard = observer(({ store = {} }) => {
             {resultsI3SLeft && (
               <div className="mb-1">
                 <a
-                  href={`i3sScanEndApplet.jsp?writeThis=true&number=${encounterNumber}&I3S=true`}
+                  href={`/encounters/i3sScanEndApplet.jsp?writeThis=true&number=${encounterNumber}&I3S=true`}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -183,7 +183,7 @@ export const SpotMappingCard = observer(({ store = {} }) => {
             {resultsI3SRight && (
               <div className="mb-1">
                 <a
-                  href={`i3sScanEndApplet.jsp?writeThis=true&number=${encounterNumber}&rightSide=true&I3S=true`}
+                  href={`/encounters/i3sScanEndApplet.jsp?writeThis=true&number=${encounterNumber}&rightSide=true&I3S=true`}
                   target="_blank"
                   rel="noopener noreferrer"
                 >

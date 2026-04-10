@@ -562,7 +562,7 @@
   "OVERVIEW": "Resumen",
   "MORE_DETAILS": "Más detalles",
   "TRACKING_AND_MEASUREMENTS": "Seguimiento y mediciones",
-  "SPOT_MAPPING_ALGORITHMS": "Algoritmos de mapeo de manchas ({algorithms})",
+  "SPOT_MAPPING_ALGORITHMS": "Algoritmos de mapeo de manchas",
   "EXTRACTED_SPOTS": "Manchas extraídas",
   "REMOVE_EXTRACTED_SPOTS": "Eliminar manchas extraídas",
   "PATTERN_MATCHING_RESULTS": "Resultados de coincidencia de patrones",

@@ -563,7 +563,7 @@
   "OVERVIEW": "Übersicht",
   "MORE_DETAILS": "Weitere Details",
   "TRACKING_AND_MEASUREMENTS": "Verfolgung und Messungen",
-  "SPOT_MAPPING_ALGORITHMS": "Algorithmen zur Fleckenkartierung ({algorithms})",
+  "SPOT_MAPPING_ALGORITHMS": "Algorithmen zur Fleckenkartierung",
   "EXTRACTED_SPOTS": "Extrahierte Flecken",
   "REMOVE_EXTRACTED_SPOTS": "Extrahierte Flecken entfernen",
   "PATTERN_MATCHING_RESULTS": "Ergebnisse des Musterabgleichs",
