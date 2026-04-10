@@ -12,17 +12,21 @@ export const SpotMappingCard = observer(({ store = {} }) => {
   const themeColor = React.useContext(ThemeColorContext);
 
   const isWrite = store?.access === "write";
-  // const isWrite = false; // Temporary override to allow testing of write features
   const loading = Boolean(store?.spotMappingLoading);
 
   const spotMapping = store?.encounterData?.spotMapping || {};
   const enabled = Boolean(spotMapping?.enabled);
+  const encounterNumber = store?.encounterData?.id || "";
 
   const hasLeftSpots = Boolean(spotMapping?.hasLeftSpots);
   const hasRightSpots = Boolean(spotMapping?.hasRightSpots);
   const numberLeftSpots = spotMapping?.numberLeftSpots ?? 0;
   const numberRightSpots = spotMapping?.numberRightSpots ?? 0;
   const hasSpots = Boolean(spotMapping?.hasSpots);
+  const resultsGrothLeft = Boolean(spotMapping?.resultsGrothLeft);
+  const resultsGrothRight = Boolean(spotMapping?.resultsGrothRight);
+  const resultsI3SLeft = Boolean(spotMapping?.resultsI3SLeft);
+  const resultsI3SRight = Boolean(spotMapping?.resultsI3SRight);
 
   const availableSides = [
     hasLeftSpots ? "left" : null,
@@ -34,8 +38,6 @@ export const SpotMappingCard = observer(({ store = {} }) => {
     : availableSides[0] || "";
 
   const algorithmTitle = "Modified Groth and I3S";
-
-  const patternResults = store?.spotMappingResultLinks || {};
   const cyan700 = themeColor?.wildMeColors?.cyan700 || "#00b7e3";
 
   const renderExtractedSpotRow = (side, count) => {
@@ -74,24 +76,6 @@ export const SpotMappingCard = observer(({ store = {} }) => {
             <RemoveIcon />
           </button>
         )}
-      </div>
-    );
-  };
-
-  const renderPatternResultRow = (algorithmKey, label) => {
-    const sideResults = patternResults?.[selectedSide] || {};
-    const href = sideResults?.[algorithmKey];
-
-    if (!href) return null;
-
-    return (
-      <div className="mb-1" key={algorithmKey}>
-        <span>{label}: </span>
-        <a href={href} target="_blank" rel="noopener noreferrer">
-          {selectedSide === "right"
-            ? "Right-side scan results"
-            : "Left-side scan results"}
-        </a>
       </div>
     );
   };
@@ -155,13 +139,57 @@ export const SpotMappingCard = observer(({ store = {} }) => {
               />
             </div>
 
-            {!selectedSide && <p className="mb-0">No scan results yet.</p>}
+            {!resultsGrothLeft &&
+              !resultsGrothRight &&
+              !resultsI3SLeft &&
+              !resultsI3SRight && <p className="mb-0">No scan results yet.</p>}
 
-            {selectedSide && (
-              <>
-                {renderPatternResultRow("groth", "Groth")}
-                {renderPatternResultRow("i3s", "I3S")}
-              </>
+            {resultsGrothLeft && (
+              <div className="mb-1">
+                <a
+                  href={`scanEndApplet.jsp?writeThis=true&number=${encounterNumber}&taskID=scanL${encounterNumber}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Groth: Left-side scan results
+                </a>
+              </div>
+            )}
+
+            {resultsGrothRight && (
+              <div className="mb-1">
+                <a
+                  href={`scanEndApplet.jsp?writeThis=true&number=${encounterNumber}&taskID=scanR${encounterNumber}&rightSide=true`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Groth: Right-side scan results
+                </a>
+              </div>
+            )}
+
+            {resultsI3SLeft && (
+              <div className="mb-1">
+                <a
+                  href={`i3sScanEndApplet.jsp?writeThis=true&number=${encounterNumber}&I3S=true`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  I3S: Left-side scan results
+                </a>
+              </div>
+            )}
+
+            {resultsI3SRight && (
+              <div className="mb-1">
+                <a
+                  href={`i3sScanEndApplet.jsp?writeThis=true&number=${encounterNumber}&rightSide=true&I3S=true`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  I3S: Right-side scan results
+                </a>
+              </div>
             )}
           </div>
 
