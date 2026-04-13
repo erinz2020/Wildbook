@@ -56,7 +56,10 @@ const ImageCard = observer(({ store = {} }) => {
   );
 
   const isTerminalDetectionStatus = (status) =>
-    status === "complete" || status === "error" || status === "pending";
+    !status ||
+    status === "complete" ||
+    status === "error" ||
+    status === "pending";
 
   const selectedAsset =
     store.encounterData?.mediaAssets?.[store.selectedImageIndex];

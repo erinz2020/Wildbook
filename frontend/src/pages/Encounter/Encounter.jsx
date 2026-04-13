@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { observer } from "mobx-react-lite";
 import { Container } from "react-bootstrap";
@@ -67,13 +67,17 @@ const Encounter = observer(() => {
 
   const params = new URLSearchParams(window.location.search);
   const encounterId = params.get("number");
+  const isInitialLoad = useRef(true);
 
   useEffect(() => {
     let cancelled = false;
     let timeoutId = null;
 
     const isTerminalDetectionStatus = (status) =>
-      status === "complete" || status === "error" || status === "pending";
+      !status ||
+      status === "complete" ||
+      status === "error" ||
+      status === "pending";
 
     const shouldContinuePolling = (encounterData) => {
       const mediaAssets = Array.isArray(encounterData?.mediaAssets)
@@ -95,9 +99,14 @@ const Encounter = observer(() => {
 
         if (cancelled) return;
 
-        store.setEncounterData(res.data);
-        store.setAccess(get(res.data, "access", "read"));
-        setEncounterValid(true);
+        if (isInitialLoad.current) {
+          store.setEncounterData(res.data);
+          store.setAccess(get(res.data, "access", "read"));
+          setEncounterValid(true);
+          isInitialLoad.current = false;
+        } else {
+          store.setMediaAssets(res.data.mediaAssets);
+        }
 
         if (shouldContinuePolling(res.data)) {
           console.log("Scheduling next encounter data fetch in 3 seconds...");
