@@ -180,7 +180,6 @@ public class StartupWildbook implements ServletContextListener {
         }
         // TODO: set strategy for the following (genericize starting "all" consumers, make configurable, move to WildbookIAM.startup, move to plugins, or other)
         startIAQueues(context);
-        TwitterBot.startServices(context);
         MetricsBot.startServices(context);
         AcmIdBot.startServices(context);
         AnnotationLite.startup(sContext, context);
@@ -410,7 +409,6 @@ public class StartupWildbook implements ServletContextListener {
         }
         AnnotationLite.cleanup(sContext, context);
         QueueUtil.cleanup();
-        TwitterBot.cleanup();
         MetricsBot.cleanup();
         AcmIdBot.cleanup();
         IndexingManagerFactory.getIndexingManager().shutdown();
