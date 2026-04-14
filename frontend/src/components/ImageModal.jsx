@@ -54,7 +54,7 @@ export const ImageModal = observer(
 
     useEffect(() => {
       setImageReady(false);
-    }, [safeIndex]);
+    }, [safeIndex, assets]);
 
     const onMouseDown = (e) => {
       if (e.button !== 0) return;
@@ -1026,7 +1026,7 @@ export const ImageModal = observer(
                         (a) => a.id === imageStore.selectedAnnotationId,
                       )?.[0]?.iaTaskId;
                       window.open(
-                        `/react/match-results?taskId=${taskId}`,
+                        `/react/match-results?taskId=${encodeURIComponent(taskId)}`,
                         "_blank",
                       );
                     }}

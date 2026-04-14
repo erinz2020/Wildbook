@@ -115,10 +115,10 @@ const ImageCard = observer(({ store = {} }) => {
               return !a.isTrivial && width > 0 && height > 0;
             })
             .map((a) => ({
-              x: a.boundingBox[0],
-              y: a.boundingBox[1],
-              width: a.boundingBox[2],
-              height: a.boundingBox[3],
+              x: a.boundingBox?.[0],
+              y: a.boundingBox?.[1],
+              width: a.boundingBox?.[2],
+              height: a.boundingBox?.[3],
               rotation: a.theta || 0,
               annotationId: a.id,
               encounterId: a.encounterId,
