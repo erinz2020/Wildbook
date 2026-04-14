@@ -80,7 +80,9 @@ export default function AuthenticatedSwitch({
           <Routes>
             <Route path="/profile" element={<Profile />} />
             <Route path="/policies-and-data" element={<PoliciesAndData />} />
-            <Route path="/how-to-photograph" element={<HowToPhotograph />} />
+            {showHowToPhotograph && (
+              <Route path="/how-to-photograph" element={<HowToPhotograph />} />
+            )}
             <Route path="/about-us" element={<AboutUs />} />
             <Route path="/projects/overview" element={<ProjectList />} />
             <Route path="/home" element={<Home />} />
