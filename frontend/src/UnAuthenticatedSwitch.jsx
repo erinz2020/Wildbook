@@ -3,9 +3,11 @@ import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import Footer from "./components/Footer";
 import UnAuthenticatedAppHeader from "./components/UnAuthenticatedAppHeader";
 import EncounterPageViewOnly from "./pages/Encounter/EncounterPageViewOnly";
-import PoliciesAndData from "./pages/PoliciesAndData/PoliciesAndData";
-import HowToPhotograph from "./pages/HowToPhotograph";
-import AboutUs from "./pages/AboutUs";
+const PoliciesAndData = lazy(
+  () => import("./pages/PoliciesAndData/PoliciesAndData"),
+);
+const HowToPhotograph = lazy(() => import("./pages/HowToPhotograph"));
+const AboutUs = lazy(() => import("./pages/AboutUs"));
 
 // Lazy load pages
 const Login = lazy(() => import("./pages/Login"));

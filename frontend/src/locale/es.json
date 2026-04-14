@@ -25,6 +25,7 @@
   "PHOTOGRAPH_TITLE": "Cómo Fotografiar Fauna Silvestre",
   "PHOTOGRAPH_DESC": "Aprenda las mejores prácticas para fotografiar fauna silvestre y ayudar con la identificación y seguimiento.",
   "FILE_NOT_FOUND": "Archivo no encontrado",
+  "PDF_NOT_AVAILABLE": "PDF no disponible para el idioma {locale}.",
   "MENU_LEARN_REPORTENCOUNTER": "Reportar un avistamiento",
   "MENU_LEARN_REPORTENCOUNTER_CLASSIC": "Reportar un avistamiento (clásico)",
   "MENU_LEARN_BULKIMPORT": "Importación masiva",

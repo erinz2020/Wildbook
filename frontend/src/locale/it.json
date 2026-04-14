@@ -25,6 +25,7 @@
   "PHOTOGRAPH_TITLE": "Come Fotografare la Fauna Selvatica",
   "PHOTOGRAPH_DESC": "Impara le migliori pratiche per fotografare la fauna selvatica per aiutare con l'identificazione e il monitoraggio.",
   "FILE_NOT_FOUND": "File non trovato",
+  "PDF_NOT_AVAILABLE": "PDF non disponibile per la lingua {locale}.",
   "MENU_LEARN_REPORTENCOUNTER": "Segnala un Incontro",
   "MENU_LEARN_REPORTENCOUNTER_CLASSIC": "Segnala un Incontro (Classico)",
   "MENU_LEARN_BULKIMPORT": "Importazione in massa",

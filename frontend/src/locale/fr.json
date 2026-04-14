@@ -25,6 +25,7 @@
   "PHOTOGRAPH_TITLE": "Comment Photographier la Faune Sauvage",
   "PHOTOGRAPH_DESC": "Apprenez les meilleures pratiques pour photographier la faune sauvage afin d'aider à l'identification et au suivi.",
   "FILE_NOT_FOUND": "Fichier introuvable",
+  "PDF_NOT_AVAILABLE": "PDF non disponible pour la langue {locale}.",
   "MENU_LEARN_REPORTENCOUNTER": "Signaler une observation",
   "MENU_LEARN_REPORTENCOUNTER_CLASSIC": "Signaler une observation (classique)",
   "MENU_LEARN_BULKIMPORT": "Importation en masse",

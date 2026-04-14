@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useMemo, useState } from "react";
 import { Container, Row, Col, Spinner, ListGroup } from "react-bootstrap";
-import { FormattedMessage } from "react-intl";
+import { FormattedMessage, useIntl } from "react-intl";
 import { useLocation, useNavigate } from "react-router-dom";
 import LocaleContext from "../../IntlProvider";
 import ThemeColorContext from "../../ThemeColorProvider";
@@ -33,10 +33,6 @@ const SECTION_PARAM_TO_KEY = {
   privacy_policy: "PRIVACY_POLICY",
   terms_of_use: "TERMS_OF_USE",
   citing_wildbook: "CITING_WILDBOOK",
-
-  PRIVACY_POLICY: "PRIVACY_POLICY",
-  TERMS_OF_USE: "TERMS_OF_USE",
-  CITING_WILDBOOK: "CITING_WILDBOOK",
 };
 
 const KEY_TO_SECTION_PARAM = {
@@ -60,6 +56,7 @@ async function exists(url) {
 export default function PoliciesAndData() {
   const { locale } = useContext(LocaleContext);
   const theme = useContext(ThemeColorContext);
+  const intl = useIntl();
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -200,8 +197,10 @@ export default function PoliciesAndData() {
 
                 {!loading && !pdfUrl && (
                   <div className="p-3 text-muted">
-                    PDF not found for <b>{locale}</b>. Put files in{" "}
-                    <code>public/files</code>.
+                    {intl.formatMessage(
+                      { id: "PDF_NOT_AVAILABLE" },
+                      { locale },
+                    )}
                   </div>
                 )}
 

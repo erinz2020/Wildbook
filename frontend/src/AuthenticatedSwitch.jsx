@@ -5,8 +5,8 @@ import NotFound from "./pages/errorPages/NotFound";
 import AuthenticatedAppHeader from "./components/AuthenticatedAppHeader";
 import Footer from "./components/Footer";
 import useGetMe from "./models/auth/users/useGetMe";
-import HowToPhotograph from "./pages/HowToPhotograph";
-import AboutUs from "./pages/AboutUs";
+const HowToPhotograph = lazy(() => import("./pages/HowToPhotograph"));
+const AboutUs = lazy(() => import("./pages/AboutUs"));
 
 // Lazy load pages
 const Login = lazy(() => import("./pages/Login"));

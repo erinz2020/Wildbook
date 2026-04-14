@@ -25,6 +25,7 @@
   "PHOTOGRAPH_TITLE": "Wie man Wildtiere Fotografiert",
   "PHOTOGRAPH_DESC": "Lernen Sie die besten Praktiken zum Fotografieren von Wildtieren, um bei der Identifizierung und Verfolgung zu helfen.",
   "FILE_NOT_FOUND": "Datei nicht gefunden",
+  "PDF_NOT_AVAILABLE": "PDF für Sprache {locale} nicht verfügbar.",
   "MENU_LEARN_REPORTENCOUNTER": "Eine Begegnung melden",
   "MENU_LEARN_REPORTENCOUNTER_CLASSIC": "Eine Begegnung melden (klassisch)",
   "MENU_LEARN_BULKIMPORT": "Massenimport",
