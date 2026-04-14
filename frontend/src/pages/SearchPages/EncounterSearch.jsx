@@ -90,60 +90,84 @@ const EncounterSearch = observer(() => {
   });
 
   const pg = async () => {
-    const response = await refetchMediaAssets();
-    const rawHits = response?.data?.data?.hits || [];
-
-    if (!rawHits.length) {
-      store.setCurrentPageItems([]);
-      return;
-    }
-
-    let rawOffset = 0;
+    let contents = [];
+    let cumulativeStart = store.start;
     let assetOffset = store.assetOffset;
     let checkedInitialBounds = false;
-    const contents = [];
+    let exhaustedBackend = false;
 
-    while (contents.length < store.pageSize && rawOffset < rawHits.length) {
-      const encounter = rawHits[rawOffset];
+    // Keep fetching encounter windows until we have pageSize visible assets
+    // or the backend returns no more hits
+    while (contents.length < store.pageSize && !exhaustedBackend) {
+      // Fetch current window of encounters
+      const response = await refetchMediaAssets({
+        params: {
+          from: cumulativeStart,
+          size: store.pageSize,
+          sort: encounterSortName,
+          sortOrder: encounterSortOrder,
+        },
+      });
 
-      if (encounter?.access === "none") {
-        rawOffset++;
-        assetOffset = 0;
-        store.setAssetOffset(0);
-        continue;
+      const rawHits = response?.data?.data?.hits || [];
+
+      if (!rawHits.length) {
+        exhaustedBackend = true;
+        break;
       }
 
-      const mediaAssets = encounter?.mediaAssets || [];
+      let rawOffset = 0;
 
-      if (!checkedInitialBounds) {
-        if (mediaAssets.length <= assetOffset) {
+      // Process encounters in this window
+      while (contents.length < store.pageSize && rawOffset < rawHits.length) {
+        const encounter = rawHits[rawOffset];
+
+        if (encounter?.access === "none") {
+          rawOffset++;
+          assetOffset = 0;
+          store.setAssetOffset(0);
+          continue;
+        }
+
+        const mediaAssets = encounter?.mediaAssets || [];
+
+        if (!checkedInitialBounds) {
+          if (mediaAssets.length <= assetOffset) {
+            assetOffset = 0;
+            store.setAssetOffset(0);
+          }
+          checkedInitialBounds = true;
+        }
+
+        if (mediaAssets.length > assetOffset) {
+          const rawAsset = mediaAssets[assetOffset];
+          rawAsset.__k = `${encounter.id}-${assetOffset}-${rawAsset.uuid ?? rawAsset.id ?? ""}`;
+          rawAsset.encounterId = encounter.id;
+          rawAsset.individualId = encounter.individualId;
+          rawAsset.date = encounter.date;
+          rawAsset.individualDisplayName = encounter.individualDisplayName;
+          rawAsset.verbatimDate = encounter.verbatimDate;
+
+          contents.push(rawAsset);
+          assetOffset++;
+          store.setAssetOffset(assetOffset);
+        } else {
+          rawOffset++;
           assetOffset = 0;
           store.setAssetOffset(0);
         }
-        checkedInitialBounds = true;
       }
 
-      if (mediaAssets.length > assetOffset) {
-        const rawAsset = mediaAssets[assetOffset];
-        rawAsset.__k = `${encounter.id}-${assetOffset}-${rawAsset.uuid ?? rawAsset.id ?? ""}`;
-        rawAsset.encounterId = encounter.id;
-        rawAsset.individualId = encounter.individualId;
-        rawAsset.date = encounter.date;
-        rawAsset.individualDisplayName = encounter.individualDisplayName;
-        rawAsset.verbatimDate = encounter.verbatimDate;
+      // Advance cumulative start by the number of encounters processed in this window
+      cumulativeStart += rawOffset;
 
-        contents.push(rawAsset);
-        assetOffset++;
-        store.setAssetOffset(assetOffset);
-      } else {
-        rawOffset++;
-        assetOffset = 0;
-        store.setAssetOffset(0);
-      }
+      // If we processed all hits in this window and still don't have enough items,
+      // the loop will continue and fetch the next window
     }
 
     store.setCurrentPageItems(contents);
-    store.setStart(store.start + rawOffset);
+    store.setStart(cumulativeStart);
+    store.setAssetOffset(assetOffset);
   };
 
   const encounters = queryID ? searchData || [] : encounterData?.results || [];
