@@ -44,8 +44,14 @@ export const SpotMappingCard = observer(({ store = {} }) => {
   const cyan700 = themeColor?.wildMeColors?.cyan700 || "#00b7e3";
 
   const handleConfirmRemove = async () => {
-    await store?.removeExtractedSpots?.(pendingRemoveSide);
-    setPendingRemoveSide(null);
+    try {
+      await store?.removeExtractedSpots?.(pendingRemoveSide);
+      setPendingRemoveSide(null);
+    } catch (error) {
+      // Error already handled by removeExtractedSpots (toast shown)
+      // Modal stays open so user can retry
+      console.error("Failed to remove spots:", error);
+    }
   };
 
   const renderExtractedSpotRow = (side, count) => {
@@ -73,11 +79,15 @@ export const SpotMappingCard = observer(({ store = {} }) => {
             style={{
               background: "transparent",
               border: "none",
-              cursor: "pointer",
+              cursor: loading ? "not-allowed" : "pointer",
+              opacity: loading ? 0.5 : 1,
             }}
+            disabled={loading}
             onClick={(e) => {
               e.stopPropagation();
-              setPendingRemoveSide(side);
+              if (!loading) {
+                setPendingRemoveSide(side);
+              }
             }}
           >
             <RemoveIcon />
@@ -345,13 +355,13 @@ export const SpotMappingCard = observer(({ store = {} }) => {
 
                   <MainButton
                     onClick={() => {
-                      store?.startSpotMappingScan?.(selectedSide);
+                      store?.startSpotMappingScan?.(store.selectedSpotMappingSide);
                     }}
                     noArrow={true}
                     color="white"
                     backgroundColor={cyan700}
                     borderColor={cyan700}
-                    disabled={!selectedSide}
+                    disabled={!store.selectedSpotMappingSide}
                   >
                     <FormattedMessage
                       id="START_SCAN"

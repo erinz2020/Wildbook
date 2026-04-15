@@ -1568,7 +1568,14 @@ class EncounterStore {
   }
 
   startSpotMappingScan(side = this._selectedSpotMappingSide) {
-    if (!this._encounterData?.id || !side) return;
+    if (!this._encounterData?.id) {
+      toast.error("Unable to start scan: encounter data not loaded");
+      return;
+    }
+    if (!side) {
+      toast.error("Please select a side before scanning");
+      return;
+    }
 
     const spotCount =
       side === "right" ? this.numberRightSpots : this.numberLeftSpots;
@@ -1577,6 +1584,8 @@ class EncounterStore {
       toast.error("Each side needs at least 4 spots before starting a scan.");
       return;
     }
+
+    this.setSpotMappingLoading(true);
 
     const form = document.createElement("form");
     form.method = "post";
@@ -1596,9 +1605,17 @@ class EncounterStore {
     addField("rightSide", String(side === "right"));
     addField("scan", "start scan");
 
-    document.body.appendChild(form);
-    form.submit();
-    document.body.removeChild(form);
+    try {
+      document.body.appendChild(form);
+      form.submit();
+      document.body.removeChild(form);
+    } catch (error) {
+      toast.error("Failed to start scan. Please check popup blocker settings.");
+      console.error("Form submission failed:", error);
+    } finally {
+      // Clear loading after a brief delay to allow the new window to open
+      setTimeout(() => this.setSpotMappingLoading(false), 1000);
+    }
   }
 
   async refreshEncounterData() {
