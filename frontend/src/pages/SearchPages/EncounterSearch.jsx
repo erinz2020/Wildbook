@@ -93,6 +93,7 @@ const EncounterSearch = observer(() => {
     if (store.pageSize !== perPage) {
       store.setPageSize(perPage);
       store.resetGallery();
+      pg();
     }
   }, [perPage]);
 
@@ -168,10 +169,7 @@ const EncounterSearch = observer(() => {
 
         let rawOffset = 0;
 
-        while (
-          contents.length < store.pageSize &&
-          rawOffset < rawHits.length
-        ) {
+        while (contents.length < store.pageSize && rawOffset < rawHits.length) {
           const encounter = rawHits[rawOffset];
 
           if (encounter?.access === "none") {

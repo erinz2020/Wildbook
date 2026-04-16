@@ -73,11 +73,11 @@ const GalleryView = observer(({ store, pg = {} }) => {
             width: "50px",
             height: "30px",
           }}
-          disabled={store.currentPage <= 0}
+          disabled={store.currentPage <= 0 || store.galleryLoading}
           color="white"
           backgroundColor={theme.primaryColors.primary500}
           onClick={() => {
-            if (store.currentPage <= 0) return;
+            if (store.currentPage <= 0 || store.galleryLoading) return;
             const current = store.currentPage;
             const prevPage = current - 1;
             const cachedPrevPage = store.previousPageItems[prevPage];
