@@ -154,7 +154,7 @@ export const ImageModal = observer(
           imgElement.removeEventListener("error", handleError);
         }
       };
-    }, [safeIndex]);
+    }, [safeIndex, assets]);
 
     useEffect(() => {
       const handleClickOutside = (event) => {
@@ -201,6 +201,10 @@ export const ImageModal = observer(
         1,
       );
     }, [rects]);
+
+    const hasNonTrivialAnnotations = imageStore.encounterAnnotations?.some(
+      (a) => !a.isTrivial && (a.boundingBox?.[2] || 0) > 0 && (a.boundingBox?.[3] || 0) > 0
+    );
 
     return (
       <div
@@ -1086,7 +1090,11 @@ export const ImageModal = observer(
                     backgroundColor={themeColor?.wildMeColors?.cyan700}
                     borderColor={themeColor?.wildMeColors?.cyan700}
                     target={true}
+                    disabled={!hasNonTrivialAnnotations}
                     onClick={() => {
+                      if (!hasNonTrivialAnnotations) {
+                        return;
+                      }
                       if (
                         !imageStore.encounterData?.mediaAssets?.[
                           imageStore.selectedImageIndex
