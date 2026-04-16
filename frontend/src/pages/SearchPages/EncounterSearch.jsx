@@ -79,7 +79,7 @@ const EncounterSearch = observer(() => {
     },
   });
 
-  const { refetch: refetchMediaAssets } = useFilterEncountersWithMediaAssets({
+  const { fetchMediaAssets } = useFilterEncountersWithMediaAssets({
     queries: store.mediaAssetsSearchQuery || [],
     params: {
       sort: encounterSortName,
@@ -102,16 +102,14 @@ const EncounterSearch = observer(() => {
     let assetOffset = initialAssetOffset;
 
     while (true) {
-      const response = await refetchMediaAssets({
-        params: {
-          from: cumulativeStart,
-          size: store.pageSize,
-          sort: encounterSortName,
-          sortOrder: encounterSortOrder,
-        },
+      const response = await fetchMediaAssets({
+        from: cumulativeStart,
+        size: store.pageSize,
+        sort: encounterSortName,
+        sortOrder: encounterSortOrder,
       });
 
-      const rawHits = response?.data?.data?.hits || [];
+      const rawHits = response?.data?.hits || [];
 
       if (!rawHits.length) {
         return false;
@@ -151,16 +149,14 @@ const EncounterSearch = observer(() => {
       // Keep fetching encounter windows until we have pageSize visible assets
       // or the backend returns no more hits.
       while (contents.length < store.pageSize && !exhaustedBackend) {
-        const response = await refetchMediaAssets({
-          params: {
-            from: cumulativeStart,
-            size: store.pageSize,
-            sort: encounterSortName,
-            sortOrder: encounterSortOrder,
-          },
+        const response = await fetchMediaAssets({
+          from: cumulativeStart,
+          size: store.pageSize,
+          sort: encounterSortName,
+          sortOrder: encounterSortOrder,
         });
 
-        const rawHits = response?.data?.data?.hits || [];
+        const rawHits = response?.data?.hits || [];
 
         if (!rawHits.length) {
           exhaustedBackend = true;
@@ -319,7 +315,7 @@ const EncounterSearch = observer(() => {
       <DataTable
         store={store}
         searchQueryId={searchQueryId}
-        refetchMediaAssets={refetchMediaAssets}
+        refetchMediaAssets={fetchMediaAssets}
         pg={pg}
         isLoading={loading}
         style={{

@@ -134,7 +134,7 @@ describe("EncounterSearch", () => {
 
     jest
       .spyOn(useFilterEncountersWithMediaAssetsHook, "default")
-      .mockReturnValue({ refetch: jest.fn() });
+      .mockReturnValue({ fetchMediaAssets: jest.fn() });
 
     jest
       .spyOn(useEncounterSearchSchemasHook, "default")
@@ -261,32 +261,30 @@ describe("EncounterSearch", () => {
 
   describe("gallery pagination with access filtering", () => {
     it("filters out encounters with access 'none' from gallery results", async () => {
-      const mockRefetchMediaAssets = jest.fn().mockResolvedValue({
+      const mockFetchMediaAssets = jest.fn().mockResolvedValue({
         data: {
-          data: {
-            hits: [
-              {
-                id: "enc1",
-                access: "none",
-                mediaAssets: [{ id: "asset1", url: "http://x/1.jpg" }],
-              },
-              {
-                id: "enc2",
-                access: "read",
-                individualId: "ind-2",
-                individualDisplayName: "Ind 2",
-                date: "2023-01-02",
-                verbatimDate: "Jan 2, 2023",
-                mediaAssets: [{ id: "asset2", url: "http://x/2.jpg" }],
-              },
-            ],
-          },
+          hits: [
+            {
+              id: "enc1",
+              access: "none",
+              mediaAssets: [{ id: "asset1", url: "http://x/1.jpg" }],
+            },
+            {
+              id: "enc2",
+              access: "read",
+              individualId: "ind-2",
+              individualDisplayName: "Ind 2",
+              date: "2023-01-02",
+              verbatimDate: "Jan 2, 2023",
+              mediaAssets: [{ id: "asset2", url: "http://x/2.jpg" }],
+            },
+          ],
         },
       });
 
       jest
         .spyOn(useFilterEncountersWithMediaAssetsHook, "default")
-        .mockReturnValue({ refetch: mockRefetchMediaAssets });
+        .mockReturnValue({ fetchMediaAssets: mockFetchMediaAssets });
 
       renderWithProviders();
 
@@ -311,50 +309,44 @@ describe("EncounterSearch", () => {
     });
 
     it("fetches subsequent windows when first window contains only restricted encounters", async () => {
-      const mockRefetchMediaAssets = jest
+      const mockFetchMediaAssets = jest
         .fn()
         .mockResolvedValueOnce({
           data: {
-            data: {
-              hits: Array(20)
-                .fill(null)
-                .map((_, i) => ({
-                  id: `restricted${i}`,
-                  access: "none",
-                  mediaAssets: [{ id: `asset${i}`, url: `http://x/${i}.jpg` }],
-                })),
-            },
+            hits: Array(20)
+              .fill(null)
+              .map((_, i) => ({
+                id: `restricted${i}`,
+                access: "none",
+                mediaAssets: [{ id: `asset${i}`, url: `http://x/${i}.jpg` }],
+              })),
           },
         })
         .mockResolvedValueOnce({
           data: {
-            data: {
-              hits: [
-                {
-                  id: "enc1",
-                  access: "read",
-                  mediaAssets: [{ id: "asset1", url: "http://x/1.jpg" }],
-                },
-                {
-                  id: "enc2",
-                  access: "read",
-                  mediaAssets: [{ id: "asset2", url: "http://x/2.jpg" }],
-                },
-              ],
-            },
+            hits: [
+              {
+                id: "enc1",
+                access: "read",
+                mediaAssets: [{ id: "asset1", url: "http://x/1.jpg" }],
+              },
+              {
+                id: "enc2",
+                access: "read",
+                mediaAssets: [{ id: "asset2", url: "http://x/2.jpg" }],
+              },
+            ],
           },
         })
         .mockResolvedValueOnce({
           data: {
-            data: {
-              hits: [],
-            },
+            hits: [],
           },
         });
 
       jest
         .spyOn(useFilterEncountersWithMediaAssetsHook, "default")
-        .mockReturnValue({ refetch: mockRefetchMediaAssets });
+        .mockReturnValue({ fetchMediaAssets: mockFetchMediaAssets });
 
       renderWithProviders();
 
@@ -364,17 +356,20 @@ describe("EncounterSearch", () => {
         expect(globalEncounterFormStore.setCurrentPageItems).toHaveBeenCalled();
       });
 
-      expect(mockRefetchMediaAssets).toHaveBeenNthCalledWith(1, {
-        params: expect.objectContaining({ from: 0, size: 20 }),
-      });
+      expect(mockFetchMediaAssets).toHaveBeenNthCalledWith(
+        1,
+        expect.objectContaining({ from: 0, size: 20 }),
+      );
 
-      expect(mockRefetchMediaAssets).toHaveBeenNthCalledWith(2, {
-        params: expect.objectContaining({ from: 20, size: 20 }),
-      });
+      expect(mockFetchMediaAssets).toHaveBeenNthCalledWith(
+        2,
+        expect.objectContaining({ from: 20, size: 20 }),
+      );
 
-      expect(mockRefetchMediaAssets).toHaveBeenNthCalledWith(3, {
-        params: expect.objectContaining({ from: 22, size: 20 }),
-      });
+      expect(mockFetchMediaAssets).toHaveBeenNthCalledWith(
+        3,
+        expect.objectContaining({ from: 22, size: 20 }),
+      );
 
       const items =
         globalEncounterFormStore.setCurrentPageItems.mock.calls[
@@ -387,37 +382,33 @@ describe("EncounterSearch", () => {
     });
 
     it("returns empty when backend is exhausted and all encounters are restricted", async () => {
-      const mockRefetchMediaAssets = jest
+      const mockFetchMediaAssets = jest
         .fn()
         .mockResolvedValueOnce({
           data: {
-            data: {
-              hits: [
-                {
-                  id: "enc1",
-                  access: "none",
-                  mediaAssets: [{ id: "asset1", url: "http://x/1.jpg" }],
-                },
-                {
-                  id: "enc2",
-                  access: "none",
-                  mediaAssets: [{ id: "asset2", url: "http://x/2.jpg" }],
-                },
-              ],
-            },
+            hits: [
+              {
+                id: "enc1",
+                access: "none",
+                mediaAssets: [{ id: "asset1", url: "http://x/1.jpg" }],
+              },
+              {
+                id: "enc2",
+                access: "none",
+                mediaAssets: [{ id: "asset2", url: "http://x/2.jpg" }],
+              },
+            ],
           },
         })
         .mockResolvedValueOnce({
           data: {
-            data: {
-              hits: [],
-            },
+            hits: [],
           },
         });
 
       jest
         .spyOn(useFilterEncountersWithMediaAssetsHook, "default")
-        .mockReturnValue({ refetch: mockRefetchMediaAssets });
+        .mockReturnValue({ fetchMediaAssets: mockFetchMediaAssets });
 
       renderWithProviders();
 
@@ -429,36 +420,32 @@ describe("EncounterSearch", () => {
         ).toHaveBeenCalledWith([]);
       });
 
-      expect(mockRefetchMediaAssets).toHaveBeenCalledTimes(2);
+      expect(mockFetchMediaAssets).toHaveBeenCalledTimes(2);
     });
 
     it("treats encounters with undefined access as accessible", async () => {
-      const mockRefetchMediaAssets = jest
+      const mockFetchMediaAssets = jest
         .fn()
         .mockResolvedValueOnce({
           data: {
-            data: {
-              hits: [
-                {
-                  id: "enc1",
-                  access: undefined,
-                  mediaAssets: [{ id: "asset1", url: "http://x/1.jpg" }],
-                },
-              ],
-            },
+            hits: [
+              {
+                id: "enc1",
+                access: undefined,
+                mediaAssets: [{ id: "asset1", url: "http://x/1.jpg" }],
+              },
+            ],
           },
         })
         .mockResolvedValueOnce({
           data: {
-            data: {
-              hits: [],
-            },
+            hits: [],
           },
         });
 
       jest
         .spyOn(useFilterEncountersWithMediaAssetsHook, "default")
-        .mockReturnValue({ refetch: mockRefetchMediaAssets });
+        .mockReturnValue({ fetchMediaAssets: mockFetchMediaAssets });
 
       renderWithProviders();
 
@@ -478,47 +465,43 @@ describe("EncounterSearch", () => {
     });
 
     it("handles mixed access levels in pagination", async () => {
-      const mockRefetchMediaAssets = jest
+      const mockFetchMediaAssets = jest
         .fn()
         .mockResolvedValueOnce({
           data: {
-            data: {
-              hits: [
-                {
-                  id: "enc1",
-                  access: "none",
-                  mediaAssets: [{ id: "asset1", url: "http://x/1.jpg" }],
-                },
-                {
-                  id: "enc2",
-                  access: "read",
-                  mediaAssets: [{ id: "asset2", url: "http://x/2.jpg" }],
-                },
-                {
-                  id: "enc3",
-                  access: "none",
-                  mediaAssets: [{ id: "asset3", url: "http://x/3.jpg" }],
-                },
-                {
-                  id: "enc4",
-                  access: "write",
-                  mediaAssets: [{ id: "asset4", url: "http://x/4.jpg" }],
-                },
-              ],
-            },
+            hits: [
+              {
+                id: "enc1",
+                access: "none",
+                mediaAssets: [{ id: "asset1", url: "http://x/1.jpg" }],
+              },
+              {
+                id: "enc2",
+                access: "read",
+                mediaAssets: [{ id: "asset2", url: "http://x/2.jpg" }],
+              },
+              {
+                id: "enc3",
+                access: "none",
+                mediaAssets: [{ id: "asset3", url: "http://x/3.jpg" }],
+              },
+              {
+                id: "enc4",
+                access: "write",
+                mediaAssets: [{ id: "asset4", url: "http://x/4.jpg" }],
+              },
+            ],
           },
         })
         .mockResolvedValueOnce({
           data: {
-            data: {
-              hits: [],
-            },
+            hits: [],
           },
         });
 
       jest
         .spyOn(useFilterEncountersWithMediaAssetsHook, "default")
-        .mockReturnValue({ refetch: mockRefetchMediaAssets });
+        .mockReturnValue({ fetchMediaAssets: mockFetchMediaAssets });
 
       renderWithProviders();
 
@@ -539,37 +522,33 @@ describe("EncounterSearch", () => {
     });
 
     it("skips encounters with empty media assets array", async () => {
-      const mockRefetchMediaAssets = jest
+      const mockFetchMediaAssets = jest
         .fn()
         .mockResolvedValueOnce({
           data: {
-            data: {
-              hits: [
-                {
-                  id: "enc1",
-                  access: "read",
-                  mediaAssets: [],
-                },
-                {
-                  id: "enc2",
-                  access: "read",
-                  mediaAssets: [{ id: "asset2", url: "http://x/2.jpg" }],
-                },
-              ],
-            },
+            hits: [
+              {
+                id: "enc1",
+                access: "read",
+                mediaAssets: [],
+              },
+              {
+                id: "enc2",
+                access: "read",
+                mediaAssets: [{ id: "asset2", url: "http://x/2.jpg" }],
+              },
+            ],
           },
         })
         .mockResolvedValueOnce({
           data: {
-            data: {
-              hits: [],
-            },
+            hits: [],
           },
         });
 
       jest
         .spyOn(useFilterEncountersWithMediaAssetsHook, "default")
-        .mockReturnValue({ refetch: mockRefetchMediaAssets });
+        .mockReturnValue({ fetchMediaAssets: mockFetchMediaAssets });
 
       renderWithProviders();
 
@@ -589,17 +568,15 @@ describe("EncounterSearch", () => {
     });
 
     it("returns empty immediately when backend returns empty hits", async () => {
-      const mockRefetchMediaAssets = jest.fn().mockResolvedValue({
+      const mockFetchMediaAssets = jest.fn().mockResolvedValue({
         data: {
-          data: {
-            hits: [],
-          },
+          hits: [],
         },
       });
 
       jest
         .spyOn(useFilterEncountersWithMediaAssetsHook, "default")
-        .mockReturnValue({ refetch: mockRefetchMediaAssets });
+        .mockReturnValue({ fetchMediaAssets: mockFetchMediaAssets });
 
       renderWithProviders();
 
@@ -611,33 +588,31 @@ describe("EncounterSearch", () => {
         ).toHaveBeenCalledWith([]);
       });
 
-      expect(mockRefetchMediaAssets).toHaveBeenCalledTimes(1);
+      expect(mockFetchMediaAssets).toHaveBeenCalledTimes(1);
     });
 
     it("accumulates assets across multiple encounter windows until pageSize is reached", async () => {
-      const mockRefetchMediaAssets = jest.fn().mockImplementation((request) => {
-        const from = request?.params?.from || 0;
+      const mockFetchMediaAssets = jest.fn().mockImplementation((request) => {
+        const from = request?.from || 0;
 
         return Promise.resolve({
           data: {
-            data: {
-              hits: Array(5)
-                .fill(null)
-                .map((_, i) => ({
-                  id: `enc${from + i}`,
-                  access: "read",
-                  mediaAssets: [
-                    { id: `asset${from + i}`, url: `http://x/${from + i}.jpg` },
-                  ],
-                })),
-            },
+            hits: Array(5)
+              .fill(null)
+              .map((_, i) => ({
+                id: `enc${from + i}`,
+                access: "read",
+                mediaAssets: [
+                  { id: `asset${from + i}`, url: `http://x/${from + i}.jpg` },
+                ],
+              })),
           },
         });
       });
 
       jest
         .spyOn(useFilterEncountersWithMediaAssetsHook, "default")
-        .mockReturnValue({ refetch: mockRefetchMediaAssets });
+        .mockReturnValue({ fetchMediaAssets: mockFetchMediaAssets });
 
       renderWithProviders();
 
@@ -658,36 +633,32 @@ describe("EncounterSearch", () => {
     it("respects assetOffset when current encounter has remaining media assets", async () => {
       globalEncounterFormStore.assetOffset = 1;
 
-      const mockRefetchMediaAssets = jest
+      const mockFetchMediaAssets = jest
         .fn()
         .mockResolvedValueOnce({
           data: {
-            data: {
-              hits: [
-                {
-                  id: "enc1",
-                  access: "read",
-                  mediaAssets: [
-                    { id: "asset0", url: "http://x/0.jpg" },
-                    { id: "asset1", url: "http://x/1.jpg" },
-                    { id: "asset2", url: "http://x/2.jpg" },
-                  ],
-                },
-              ],
-            },
+            hits: [
+              {
+                id: "enc1",
+                access: "read",
+                mediaAssets: [
+                  { id: "asset0", url: "http://x/0.jpg" },
+                  { id: "asset1", url: "http://x/1.jpg" },
+                  { id: "asset2", url: "http://x/2.jpg" },
+                ],
+              },
+            ],
           },
         })
         .mockResolvedValueOnce({
           data: {
-            data: {
-              hits: [],
-            },
+            hits: [],
           },
         });
 
       jest
         .spyOn(useFilterEncountersWithMediaAssetsHook, "default")
-        .mockReturnValue({ refetch: mockRefetchMediaAssets });
+        .mockReturnValue({ fetchMediaAssets: mockFetchMediaAssets });
 
       renderWithProviders();
 
