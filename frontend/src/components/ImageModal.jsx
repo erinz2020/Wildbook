@@ -40,6 +40,7 @@ export const ImageModal = observer(
     const [scaleX, setScaleX] = useState(1);
     const [scaleY, setScaleY] = useState(1);
     const [imageReady, setImageReady] = useState(false);
+    const [imageError, setImageError] = useState(false);
 
     const safeIndex = Math.min(Math.max(index, 0), assets.length - 1);
     const a = assets[safeIndex] || {};
@@ -54,6 +55,7 @@ export const ImageModal = observer(
 
     useEffect(() => {
       setImageReady(false);
+      setImageError(false);
     }, [safeIndex, assets]);
 
     const onMouseDown = (e) => {
@@ -134,6 +136,7 @@ export const ImageModal = observer(
       };
 
       const handleError = () => {
+        setImageError(true);
         setImageReady(true);
       };
 
@@ -396,6 +399,7 @@ export const ImageModal = observer(
                       {tip.text}
                     </Tooltip>
                     {imageReady &&
+                      !imageError &&
                       imageStore.showAnnotations &&
                       rects.length > 0 &&
                       rects.map((rect, index) => {

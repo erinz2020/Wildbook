@@ -29,6 +29,7 @@ const ImageCard = observer(({ store = {} }) => {
   const [clickedAnnotation, setClickedAnnotation] = useState(null);
   const [editAnnotationParams, setEditAnnotationParams] = useState({});
   const [imageReady, setImageReady] = useState(false);
+  const [imageError, setImageError] = useState(false);
   const intl = useIntl();
   const mediaAssets = store.encounterData?.mediaAssets;
   const hasMediaAssets = Array.isArray(mediaAssets) && mediaAssets.length > 0;
@@ -41,6 +42,7 @@ const ImageCard = observer(({ store = {} }) => {
 
   useEffect(() => {
     setImageReady(false);
+    setImageError(false);
   }, [store.selectedImageIndex]);
 
   const currentAnnotation =
@@ -179,6 +181,7 @@ const ImageCard = observer(({ store = {} }) => {
     };
 
     const handleError = () => {
+      setImageError(true);
       setImageReady(true);
     };
 
@@ -325,6 +328,7 @@ const ImageCard = observer(({ store = {} }) => {
         }}
       >
         {imageReady &&
+          !imageError &&
           rects.length > 0 &&
           rects.map((rect, index) => {
             let newRect = { ...rect };
@@ -618,7 +622,7 @@ const ImageCard = observer(({ store = {} }) => {
               }}
             />
 
-            {!imageReady && (
+            {!imageReady && !imageError && (
               <div
                 style={{
                   position: "absolute",
