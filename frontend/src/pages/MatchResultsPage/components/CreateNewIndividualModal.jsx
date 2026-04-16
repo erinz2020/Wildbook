@@ -21,49 +21,59 @@ const CreateNewIndividualModal = ({
   const [loadingSuggestedId, setLoadingSuggestedId] = React.useState(false);
 
   React.useEffect(() => {
-    if (show && locationId) {
-      setLoadingSuggestedId(true);
+    if (!show || !locationId) return undefined;
 
-      fetch(
-        `/api/v3/individuals/info/next_name?locationId=${encodeURIComponent(locationId)}`,
-      )
-        .then(async (res) => {
-          if (!res.ok) throw new Error(`HTTP ${res.status}`);
-          return res.json();
-        })
-        .then((data) => {
-          if (
-            data.success === true &&
-            data.results &&
-            data.results.length > 0
-          ) {
-            const successfulResult = data.results.find(
-              (r) => r.success === true,
-            );
-            if (successfulResult && successfulResult.nextName) {
-              setSuggestedId(successfulResult.nextName);
-            } else {
-              setSuggestedId(null);
-            }
+    const controller = new AbortController();
+    setLoadingSuggestedId(true);
+
+    fetch(
+      `/api/v3/individuals/info/next_name?locationId=${encodeURIComponent(locationId)}`,
+      { signal: controller.signal },
+    )
+      .then(async (res) => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.json();
+      })
+      .then((data) => {
+        if (
+          data.success === true &&
+          data.results &&
+          data.results.length > 0
+        ) {
+          const successfulResult = data.results.find(
+            (r) => r.success === true,
+          );
+          if (successfulResult && successfulResult.nextName) {
+            setSuggestedId(successfulResult.nextName);
           } else {
             setSuggestedId(null);
           }
-        })
-        .catch((err) => {
-          console.error("Failed to fetch suggested ID:", err);
+        } else {
           setSuggestedId(null);
-          toast.error(
-            intl.formatMessage({
-              id: "LOAD_SUGGESTED_ID_FAILED",
-              defaultMessage: "Failed to load suggested ID",
-            }),
-          );
-        })
-        .finally(() => {
+        }
+      })
+      .catch((err) => {
+        if (err.name === "AbortError") return;
+
+        console.error("Failed to fetch suggested ID:", err);
+        setSuggestedId(null);
+        toast.error(
+          intl.formatMessage({
+            id: "LOAD_SUGGESTED_ID_FAILED",
+            defaultMessage: "Failed to load suggested ID",
+          }),
+        );
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) {
           setLoadingSuggestedId(false);
-        });
-    }
-  }, [show, locationId]);
+        }
+      });
+
+    return () => {
+      controller.abort();
+    };
+  }, [show, locationId, intl]);
 
   React.useEffect(() => {
     if (!show) {
@@ -222,7 +232,7 @@ const CreateNewIndividualModal = ({
                     defaultMessage="Loading suggested ID..."
                   />
                 </span>
-              ) : suggestedId ? (
+              ) : suggestedId !== null && suggestedId !== undefined ? (
                 <>
                   <span
                     className="text-muted"

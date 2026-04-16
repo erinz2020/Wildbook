@@ -36,29 +36,29 @@ const MatchResults = observer(() => {
   }, [projectsForUser]);
 
   useEffect(() => {
-    if (!projectIdPrefix) return;
-    if (!taskId) return;
-
-    const match = Object.entries(projectsForUser).find(
-      ([, p]) => p?.prefix === projectIdPrefix,
-    );
-    if (!match) return;
-
-    const [projectId] = match;
-
-    store.setProjectNames([projectId], { fetch: false });
-    store.fetchMatchResults();
-  }, [projectIdPrefix, projectsForUser, taskId, store]);
-
-  useEffect(() => {
     if (taskId) {
+      let initialProjectIds = [];
+
+      if (projectIdPrefix) {
+        if (siteSettingsLoading) return;
+
+        const match = Object.entries(projectsForUser).find(
+          ([, p]) => p?.prefix === projectIdPrefix,
+        );
+        if (match) {
+          initialProjectIds = [match[0]];
+        }
+      }
+
       store.setTaskId(taskId);
+      store.setProjectNames(initialProjectIds, { fetch: false });
       store.fetchMatchResults();
     } else {
       store.setTaskId(null);
+      store.setProjectNames([], { fetch: false });
       store.clearResults();
     }
-  }, [taskId, store]);
+  }, [taskId, projectIdPrefix, projectsForUser, siteSettingsLoading]);
 
   useEffect(() => {
     if (!taskId || !store.shouldPoll) return;
@@ -80,7 +80,7 @@ const MatchResults = observer(() => {
     return () => {
       cancelled = true;
     };
-  }, [taskId, store, store.shouldPoll]);
+  }, [taskId, store.shouldPoll]);
 
   if (store.loading) {
     return <FullScreenLoader data-testid="match-results-loader" />;
