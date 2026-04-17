@@ -24,7 +24,7 @@ export default function FrontDesk() {
   const [mergeData, setMergeData] = useState([]);
   const [count, setCount] = useState(0);
   const [loading, setLoading] = useState(true);
-  const { data } = useGetSiteSettings();
+  const { data, isLoading: siteSettingsLoading } = useGetSiteSettings();
   const showclassicsubmit = data?.showClassicSubmit;
   const showClassicEncounterSearch = data?.showClassicEncounters;
   const showHowToPhotograph = data?.showHowToPhotograph;
@@ -81,7 +81,7 @@ export default function FrontDesk() {
     }
   }, [isLoggedIn]);
 
-  if (loading) return <LoadingScreen />;
+  if (loading || siteSettingsLoading) return <LoadingScreen />;
 
   if (isLoggedIn) {
     return (
