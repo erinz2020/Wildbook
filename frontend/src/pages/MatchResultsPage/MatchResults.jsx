@@ -24,7 +24,17 @@ const MatchResults = observer(() => {
   const taskId = params.get("taskId");
   const projectIdPrefix = params.get("projectIdPrefix");
   const { data, isLoading: siteSettingsLoading } = useSiteSettings();
-  const { projectsForUser = {}, identificationRemarks = [] } = data || {};
+
+  // Stabilize projectsForUser reference to prevent unnecessary effect re-renders
+  const projectsForUser = React.useMemo(
+    () => data?.projectsForUser ?? {},
+    [data?.projectsForUser],
+  );
+  const identificationRemarks = React.useMemo(
+    () => data?.identificationRemarks ?? [],
+    [data?.identificationRemarks],
+  );
+
   const [filterVisible, setFilterVisible] = React.useState(false);
   const [isInputFocused, setIsInputFocused] = React.useState(false);
 
