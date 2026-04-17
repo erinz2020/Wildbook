@@ -487,7 +487,11 @@ export default class MatchResultsStore {
 
   setProjectNames(names, { fetch = true } = {}) {
     const next = Array.isArray(names) ? names : [];
-    if (JSON.stringify(this._projectNames) === JSON.stringify(next)) return;
+
+    // Compare sorted copies to avoid spurious refetches when order differs
+    const currentSorted = [...this._projectNames].sort();
+    const nextSorted = [...next].sort();
+    if (JSON.stringify(currentSorted) === JSON.stringify(nextSorted)) return;
 
     this._projectNames = next;
 
