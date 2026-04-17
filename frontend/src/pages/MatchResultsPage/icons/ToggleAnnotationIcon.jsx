@@ -1,7 +1,7 @@
 import React from "react";
 import ThemeColorContext from "../../../ThemeColorProvider";
 
-export default function ToggoleAnnotationIcon({
+export default function ToggleAnnotationIcon({
   onClick = () => {},
   style = {},
   className = "",

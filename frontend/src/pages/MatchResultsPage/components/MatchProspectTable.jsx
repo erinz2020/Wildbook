@@ -3,7 +3,7 @@ import { Row, Col, Form, Modal, Spinner } from "react-bootstrap";
 import ZoomInIcon from "../icons/ZoomInIcon";
 import ZoomOutIcon from "../icons/ZoomOutIcon";
 import HatchMarkIcon from "../icons/HatchMarkIcon";
-import ToggoleAnnotationIcon from "../icons/ToggoleAnnotationIcon";
+import ToggleAnnotationIcon from "../icons/ToggleAnnotationIcon";
 import FullScreenIcon from "../icons/FullScreenIcon";
 import InteractiveAnnotationOverlay from "../../../components/AnnotationOverlay";
 import { FormattedMessage, useIntl } from "react-intl";
@@ -823,7 +823,7 @@ const MatchProspectTable = ({
               data-testid={`match-prospect-toggle-annotations-${sectionId}`}
               aria-disabled={!hasRightImage}
             >
-              <ToggoleAnnotationIcon />
+              <ToggleAnnotationIcon />
             </div>
 
             <div
@@ -1034,7 +1034,7 @@ const MatchProspectTable = ({
                       id={`match-prospect-fullscreen-toggle-annotations-${sectionId}`}
                       data-testid={`match-prospect-fullscreen-toggle-annotations-${sectionId}`}
                     >
-                      <ToggoleAnnotationIcon />
+                      <ToggleAnnotationIcon />
                     </div>
 
                     <div

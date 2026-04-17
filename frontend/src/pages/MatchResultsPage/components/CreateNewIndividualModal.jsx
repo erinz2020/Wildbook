@@ -35,14 +35,8 @@ const CreateNewIndividualModal = ({
         return res.json();
       })
       .then((data) => {
-        if (
-          data.success === true &&
-          data.results &&
-          data.results.length > 0
-        ) {
-          const successfulResult = data.results.find(
-            (r) => r.success === true,
-          );
+        if (data.success === true && data.results && data.results.length > 0) {
+          const successfulResult = data.results.find((r) => r.success === true);
           if (successfulResult && successfulResult.nextName) {
             setSuggestedId(successfulResult.nextName);
           } else {
@@ -55,7 +49,6 @@ const CreateNewIndividualModal = ({
       .catch((err) => {
         if (err.name === "AbortError") return;
 
-        console.error("Failed to fetch suggested ID:", err);
         setSuggestedId(null);
         toast.error(
           intl.formatMessage({

@@ -3,7 +3,7 @@ import { Modal } from "react-bootstrap";
 import { FormattedMessage } from "react-intl";
 import ZoomInIcon from "../icons/ZoomInIcon";
 import ZoomOutIcon from "../icons/ZoomOutIcon";
-import ToggoleAnnotationIcon from "../icons/ToggoleAnnotationIcon";
+import ToggleAnnotationIcon from "../icons/ToggleAnnotationIcon";
 import HatchMarkIcon from "../icons/HatchMarkIcon";
 import FullScreenIcon from "../icons/FullScreenIcon";
 
@@ -244,7 +244,7 @@ export default function InstructionsModal({
             id="match-instructions-tool-annotations"
             data-testid="match-instructions-tool-annotations"
           >
-            <ToggoleAnnotationIcon />
+            <ToggleAnnotationIcon />
             <div>
               <FormattedMessage id="ANNOTATION_TOOL_DESC" />
             </div>
