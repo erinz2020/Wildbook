@@ -724,6 +724,14 @@ public class IBEISIA {
         return null; // if we fall through, it means we are still waiting ......
     }
 
+    // singular log version
+    public static JSONObject getTaskResultsBasic(String taskID, IdentityServiceLog log) {
+        ArrayList<IdentityServiceLog> one = new ArrayList<IdentityServiceLog>();
+
+        one.add(log);
+        return getTaskResultsBasic(taskID, one);
+    }
+
     public static HashMap<String, Object> getTaskResultsAsHashMap(String taskID, String context) {
         JSONObject jres = getTaskResults(taskID, context);
         HashMap<String, Object> res = new HashMap<String, Object>();
@@ -1789,6 +1797,7 @@ public class IBEISIA {
             // set "error" on Task
             Task task = myShepherd.getTask(taskID);
             if (task != null) {
+                task.setStatusDetailsAddError("INVALID", "could not parse inference_dict from results");
                 task.setStatus("error");
             }
             myShepherd.rollbackDBTransaction();
@@ -1860,6 +1869,17 @@ public class IBEISIA {
         if (task != null) {
             task.setStatus("completed");
             task.setCompletionDateInMilliseconds();
+            try {
+                MatchResult mr = new MatchResult(task, j, myShepherd);
+                System.out.println("processCallbackIdentify() created " + mr + " on " + task);
+                myShepherd.getPM().makePersistent(mr);
+                task.setStatusDetailsAddLog("Created " + mr + " upon task completion");
+            } catch (IOException ex) {
+                System.out.println("processCallbackIdentify() failed to create MatchResult on " +
+                    task + ": " + ex);
+                ex.printStackTrace();
+                task.setStatusDetailsAddError("UNKNOWN", "Creation of MatchResult upon task completion failed due to: " + ex);
+            }
         }
         myShepherd.commitDBTransaction();
         myShepherd.closeDBTransaction();
@@ -2046,9 +2066,6 @@ public class IBEISIA {
             System.out.println("INFO: setting iaBaseURL=" + iaBaseURL);
         }
         String ustr = iaBaseURL;
-
-        System.out.println("!!!ustr: " + iaBaseURL);
-        System.out.println("!!!urlSuffix: " + urlSuffix);
         if (urlSuffix != null) {
             if (urlSuffix.indexOf("/") == 0) urlSuffix = urlSuffix.substring(1); // get rid of leading /
             ustr += urlSuffix;

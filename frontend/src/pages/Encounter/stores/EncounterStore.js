@@ -603,7 +603,11 @@ class EncounterStore {
       this.encounterData?.mediaAssets?.[
         this._selectedImageIndex
       ]?.annotations?.filter(
-        (data) => data.encounterId === this.encounterData.id,
+        (data) =>
+          data.encounterId === this.encounterData.id &&
+          !data.isTrivial &&
+          (data.boundingBox?.[2] || 0) > 0 &&
+          (data.boundingBox?.[3] || 0) > 0,
       ) || []
     );
   }
@@ -718,22 +722,19 @@ class EncounterStore {
 
   get locationIdOptions() {
     if (this._siteSettingsData?.locationData?.locationID) {
-      this._locationIdOptions = convertToTreeDataWithName(
+      return convertToTreeDataWithName(
         this._siteSettingsData.locationData.locationID,
       );
-      return this._locationIdOptions;
     }
     return [];
   }
 
   get identificationRemarksOptions() {
     if (this._siteSettingsData?.identificationRemarks) {
-      this._identificationRemarksOptions =
-        this._siteSettingsData.identificationRemarks.map((data) => ({
-          value: data,
-          label: data,
-        }));
-      return this._identificationRemarksOptions;
+      return this._siteSettingsData.identificationRemarks.map((data) => ({
+        value: data,
+        label: data,
+      }));
     }
     return [];
   }
