@@ -15,7 +15,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import org.ecocean.ia.IAException;
-// import org.ecocean.ia.MatchResult;
+import org.ecocean.ia.MatchResult;
 import org.ecocean.ia.MLService;
 import org.ecocean.ia.Task;
 import org.ecocean.shepherd.core.Shepherd;
@@ -292,7 +292,7 @@ public class Embedding implements java.io.Serializable {
                     System.out.println("findMatchProspects() cannot getMatches() on " + ann +
                         " due to no suitable embeddings for " + iaConfig);
                     subTask.setStatus("error");
-                    // FIXME subTask.setStatusDetailsAddError("REQUIRED", "no suitable embeddings for getMatches()");
+                    subTask.setStatusDetailsAddError("REQUIRED", "no suitable embeddings for getMatches()");
                     subTask.setCompletionDateInMilliseconds();
                     myShepherd.getPM().makePersistent(subTask);
                     continue;
@@ -313,7 +313,7 @@ public class Embedding implements java.io.Serializable {
                 System.out.println("findMatchProspects() cannot getMatches() on " + ann +
                     " due to no suitable embeddings for " + iaConfig);
                 subTask.setStatus("error");
-                // FIXME subTask.setStatusDetailsAddError("REQUIRED", "no suitable embeddings for getMatches()");
+                subTask.setStatusDetailsAddError("REQUIRED", "no suitable embeddings for getMatches()");
                 subTask.setCompletionDateInMilliseconds();
                 myShepherd.getPM().makePersistent(subTask);
                 continue; // on to next ann
@@ -330,7 +330,6 @@ public class Embedding implements java.io.Serializable {
             System.out.println("findMatchProspects() on " + ann + " found " +
                 Util.collectionSize(prospects) + " prospects (in " + numberCandidates +
                 " candidates) for subTask " + subTask.getId());
-/*  FOR FUTURE EXPANSION when merged with MatchResults branch FIXME (also uncomment import at top)
             try {
                 // we build this even if empty, cuz that means we got results; just not nice ones
                 MatchResult mr = new MatchResult(subTask, prospects, numberCandidates, myShepherd);
@@ -340,7 +339,6 @@ public class Embedding implements java.io.Serializable {
                 System.out.println("findMatchProspects() MatchResult creation failed on " + subTask + ": " + ex);
                 ex.printStackTrace();
             }
- */
             subTask.setStatus("completed");
             subTask.setCompletionDateInMilliseconds();
             myShepherd.getPM().makePersistent(subTask);

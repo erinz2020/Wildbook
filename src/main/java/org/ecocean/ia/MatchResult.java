@@ -18,7 +18,7 @@ import org.json.JSONObject;
 import org.ecocean.api.UploadedFiles;
 import org.ecocean.Annotation;
 import org.ecocean.Encounter;
-// import org.ecocean.ia.MLService;
+import org.ecocean.ia.MLService;
 import org.ecocean.ia.Task;
 import org.ecocean.identity.IBEISIA;
 import org.ecocean.identity.IdentityServiceLog;
@@ -192,9 +192,7 @@ public class MatchResult implements java.io.Serializable {
             // these scores are direct from opensearch
             for (Annotation ann : annots) {
                 MediaAsset ma = createInspectionPairxAsset(this.queryAnnotation, ann, myShepherd);
-                // TODO FIXME - getOpensearchScore() comes in via vector branch - replace this in the merged future
-                // this.prospects.add(new MatchResultProspect(ann, ann.getOpensearchScore(), "annot", ma));
-                this.prospects.add(new MatchResultProspect(ann, 0.0d, "annot", ma));
+                this.prospects.add(new MatchResultProspect(ann, ann.getOpensearchScore(), "annot", ma));
             }
         }
         return this.prospects.size();
@@ -365,7 +363,6 @@ public class MatchResult implements java.io.Serializable {
     throws IOException {
         if (txStr == null) throw new IOException("passed null taxonomy");
         String urlStr = null;
-/*  FIXME make live when merged with vectors branch
         try {
             MLService mls = new MLService();
             List<JSONObject> confs = mls.getConfigs(txStr);
@@ -374,7 +371,6 @@ public class MatchResult implements java.io.Serializable {
         } catch (IAException ex) {
             throw new IOException(ex);
         }
- */
         if (urlStr == null) return null;
         return new URL(urlStr + "/explain/");
     }
