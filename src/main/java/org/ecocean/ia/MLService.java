@@ -376,6 +376,7 @@ public class MLService {
             System.out.println("sendPayload(" + url + ") threw " + ex);
             ex.printStackTrace();
             String msg = ex.getMessage();
+            if (msg == null) msg = ""; // safety against NPE
             if (msg.contains("Connection refused")) {
                 throw new IAException("Connection refused", true, true);
             } else if (msg.contains("Read timed out")) {
