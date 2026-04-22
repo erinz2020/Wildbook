@@ -1419,6 +1419,14 @@ public class IBEISIA {
                 ">>>>>>>>>>>>>>>>>>>>>>>>>> SHORT-CIRCUIT of detection-to-identification <<<<<<<<<<<<<<<<<<<<<<<<");
             System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> " +
                 dres.optJSONObject("annotations"));
+/*
+            newAnns (left commented out below) remains null here, which caused claude/codex code review to fear that non-embedding pipelne was broken
+            and ident would not be picked up without embeddings being extracted. however, testing proves that in the event IA.json is entirely
+            missing mlservice references, the pipeline behaves as expected, since the extraction loop (see `embedTask` in IBEISIA.java) basically
+            does nothing, yet continues on with pipeline to identification. this can be seen when testing that the `if (fromEmbeddingExtraction)` code
+            a few lines below here still has output (in mlservice-free IA.json) such as:
+            [DEBUG] IBEISIA.processCallback() [embeddingExtraction] taskID=42816234-5ce7-4fcf-bb76-978727346a71; resp=>{"annotationMap":{"403191":["a7a44a49-edda-4fef-aac0-e69730420745"]},"embeddingExtraction":true}
+ */
             /* newAnns = dres.optJSONObject("annotations"); */
         } else if ("identify".equals(type)) {
             rtn.put("success", true);
@@ -1797,7 +1805,8 @@ public class IBEISIA {
             // set "error" on Task
             Task task = myShepherd.getTask(taskID);
             if (task != null) {
-                task.setStatusDetailsAddError("INVALID", "could not parse inference_dict from results");
+                task.setStatusDetailsAddError("INVALID",
+                    "could not parse inference_dict from results");
                 task.setStatus("error");
             }
             myShepherd.rollbackDBTransaction();
@@ -1878,7 +1887,8 @@ public class IBEISIA {
                 System.out.println("processCallbackIdentify() failed to create MatchResult on " +
                     task + ": " + ex);
                 ex.printStackTrace();
-                task.setStatusDetailsAddError("UNKNOWN", "Creation of MatchResult upon task completion failed due to: " + ex);
+                task.setStatusDetailsAddError("UNKNOWN",
+                    "Creation of MatchResult upon task completion failed due to: " + ex);
             }
         }
         myShepherd.commitDBTransaction();
