@@ -169,7 +169,7 @@ public class MLService {
         } finally {
             // we end up here after *each* annotation, so we are "done" when all annotations have been processed
             boolean taskComplete = skipEmbedding || areAllEmbeddingsExtracted(task);
-            if (taskComplete) task.setCompletionDateInMilliseconds();
+            if (taskComplete && (task != null)) task.setCompletionDateInMilliseconds();
             myShepherd.commitDBTransaction();
             if (taskComplete) {
                 // now we are done we can fake a callback to initiate identification
@@ -177,15 +177,16 @@ public class MLService {
                 fakeResp.put("embeddingExtraction", true);
                 // taskComplete is only true if we have *some* annots
                 JSONObject annMap = new JSONObject();
-                for (Annotation ann : task.getObjectAnnotations()) {
-                    MediaAsset ma = ann.getMediaAsset();
-                    if (ma == null) continue; // snh
-                    if (!annMap.has(ma.getId())) annMap.put(ma.getId(), new JSONArray());
-                    annMap.getJSONArray(ma.getId()).put(ann.getId());
-                }
+                if (task != null)
+                    for (Annotation ann : task.getObjectAnnotations()) {
+                        MediaAsset ma = ann.getMediaAsset();
+                        if (ma == null) continue; // snh
+                        if (!annMap.has(ma.getId())) annMap.put(ma.getId(), new JSONArray());
+                        annMap.getJSONArray(ma.getId()).put(ann.getId());
+                    }
                 fakeResp.put("annotationMap", annMap);
-                JSONObject cbRes = IBEISIA.processCallback(task.getId(), fakeResp,
-                    myShepherd.getContext(), null);
+                JSONObject cbRes = IBEISIA.processCallback((task == null) ? null : task.getId(),
+                    fakeResp, myShepherd.getContext(), null);
                 System.out.println("[DEBUG] MLService.processQueueJob() [" + task +
                     " complete] cbRes=" + cbRes);
             }
