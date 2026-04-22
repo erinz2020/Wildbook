@@ -209,17 +209,17 @@ public class Embedding implements java.io.Serializable {
     public static JSONObject catchUpEmbeddings(Shepherd myShepherd, String startId, int batchSize) {
         if (batchSize < 1) batchSize = BACKGROUND_BATCH_SIZE;
         JSONObject embData = SystemValue.getJSONObject(myShepherd, "EMBEDDING_CATCHUP");
-
         if (embData == null) embData = new JSONObject();
         // this will pick up where last left off, effectively
         // note: passing zero-uuid will effectively override to start over
         // TODO prevent duplicate runs by perhaps locking wity SystemValue like indexing
         if (startId == null) startId = embData.optString("_lastId", null);
-        System.out.println("catchUpEmbeddings: beginning at " + startId + "; batch size=" + batchSize);
+        System.out.println("catchUpEmbeddings: beginning at " + startId + "; batch size=" +
+            batchSize);
 
         String sql =
             "select \"ANNOTATION\".\"ID\" as \"ID\" from \"ANNOTATION\" left join \"EMBEDDING\" on (\"ANNOTATION\".\"ID\" = \"ANNOTATION_ID\") where \"VECTORFLOATARRAY\" is null";
-        if (startId != null) sql += " AND \"ANNOTATION\".\"ID\" > '" + startId + "'";
+        if (Util.isUUID(startId)) sql += " AND \"ANNOTATION\".\"ID\" > '" + startId + "'";
         sql += " order by \"ANNOTATION\".\"ID\" limit " + batchSize;
         Query q = myShepherd.getPM().newQuery("javax.jdo.query.SQL", sql);
         q.setClass(Annotation.class);
@@ -266,39 +266,43 @@ public class Embedding implements java.io.Serializable {
         if ((iaConfig == null) || (iaConfig.optString("api_endpoint", null) == null)) return false;
         // from here on out we should return true since this is a vector match, even when something goes wrong
         // and we should also set status on the task (and subtasks)
-        if (task == null) return true;  // cant really set status on this :(
+        if (task == null) return true; // cant really set status on this :(
         if (task.numberAnnotations() < 1) {
             task.setStatus("completed");
             task.setCompletionDateInMilliseconds();
             return true;
         }
-        System.out.println("findMatchProspects() (task " + task.getId() + ", " + task.numberAnnotations() + " annots) has embedding match: " + iaConfig);
+        System.out.println("findMatchProspects() (task " + task.getId() + ", " +
+            task.numberAnnotations() + " annots) has embedding match: " + iaConfig);
         for (Annotation ann : task.getObjectAnnotations()) {
             // every ann gets a subTask
             Task subTask = new Task(task);
             subTask.addObject(ann);
-
             // we need embedding(s) on this annot to find prospects, so lets try to make some on the fly if we dont have one
             // TODO not sure if this is wise, or it would be better to just fail outright and let some background process do this
             if (ann.numberEmbeddings() < 1) {
-                System.out.println("[DEBUG] findMatchProspects() creating embeddings on the fly; found none on " + ann);
+                System.out.println(
+                    "[DEBUG] findMatchProspects() creating embeddings on the fly; found none on " +
+                    ann);
                 try {
                     ann.extractEmbeddings(myShepherd);
                 } catch (IAException ex) {
-                    System.out.println("[WARNING] findMatchProspects() unable to extractEmbeddings on " + ann + " due to: " + ex);
+                    System.out.println(
+                        "[WARNING] findMatchProspects() unable to extractEmbeddings on " + ann +
+                        " due to: " + ex);
                 }
                 // if none now, we just fail and continue onto next annot
                 if (ann.numberEmbeddings() < 1) {
                     System.out.println("findMatchProspects() cannot getMatches() on " + ann +
                         " due to no suitable embeddings for " + iaConfig);
                     subTask.setStatus("error");
-                    subTask.setStatusDetailsAddError("REQUIRED", "no suitable embeddings for getMatches()");
+                    subTask.setStatusDetailsAddError("REQUIRED",
+                        "no suitable embeddings for getMatches()");
                     subTask.setCompletionDateInMilliseconds();
                     myShepherd.getPM().makePersistent(subTask);
                     continue;
                 }
             }
-
             // first we get matchingSetQuery to find number of candidates
             boolean useClauses = false; // TODO how??
             JSONObject matchingSetQuery = ann.getMatchingSetQuery(myShepherd, task.getParameters(),
@@ -307,18 +311,17 @@ public class Embedding implements java.io.Serializable {
             String[] methodValues = MLService.getMethodValues(iaConfig);
             JSONObject matchQuery = ann.getMatchQuery(methodValues[0], methodValues[1],
                 matchingSetQuery);
-
             // i think this will never happen now, due to on-the-fly fix above; but leaving to be safe
             if (matchQuery == null) {
                 System.out.println("findMatchProspects() cannot getMatches() on " + ann +
                     " due to no suitable embeddings for " + iaConfig);
                 subTask.setStatus("error");
-                subTask.setStatusDetailsAddError("REQUIRED", "no suitable embeddings for getMatches()");
+                subTask.setStatusDetailsAddError("REQUIRED",
+                    "no suitable embeddings for getMatches()");
                 subTask.setCompletionDateInMilliseconds();
                 myShepherd.getPM().makePersistent(subTask);
                 continue; // on to next ann
             }
-
             OpenSearch os = new OpenSearch();
             int numberCandidates = -2;
             try {
@@ -336,7 +339,8 @@ public class Embedding implements java.io.Serializable {
                 System.out.println("findMatchProspects() created " + mr + " on " + subTask);
                 myShepherd.getPM().makePersistent(mr);
             } catch (IOException ex) {
-                System.out.println("findMatchProspects() MatchResult creation failed on " + subTask + ": " + ex);
+                System.out.println("findMatchProspects() MatchResult creation failed on " +
+                    subTask + ": " + ex);
                 ex.printStackTrace();
             }
             subTask.setStatus("completed");
