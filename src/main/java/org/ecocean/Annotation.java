@@ -1602,7 +1602,8 @@ public class Annotation extends Base implements java.io.Serializable {
         try {
             ann.extractEmbeddings(txStr, myShepherd);
         } catch (Exception ex) {
-            System.out.println("Annotation.createFromApi(): embedding failed for " + ann + ": " + ex);
+            System.out.println("Annotation.createFromApi(): embedding failed for " + ann + ": " +
+                ex);
         }
         // send to IA as needed
         try {
@@ -1623,6 +1624,7 @@ public class Annotation extends Base implements java.io.Serializable {
     public void extractEmbeddings(String txStr, Shepherd myShepherd)
     throws IAException {
         MLService mls = new MLService();
+
         mls.send(this, txStr, myShepherd);
         System.out.println("[INFO] extractEmbeddings(): embedding processed for " + this);
     }
@@ -1631,6 +1633,7 @@ public class Annotation extends Base implements java.io.Serializable {
     public void extractEmbeddings(Shepherd myShepherd)
     throws IAException {
         Encounter enc = this.findEncounter(myShepherd);
+
         if (enc == null) throw new IAException("cannot determine Encounter for " + this);
         extractEmbeddings(enc.getTaxonomyString(), myShepherd);
     }
@@ -1889,6 +1892,7 @@ public class Annotation extends Base implements java.io.Serializable {
 
     public Map<String, Integer> getEmbeddingCounts() {
         Map<String, Integer> cts = new HashMap<String, Integer>();
+
         if (Util.collectionIsEmptyOrNull(embeddings)) return cts;
         for (Embedding emb : embeddings) {
             String md = emb.getMethodDescription();
@@ -1967,7 +1971,7 @@ public class Annotation extends Base implements java.io.Serializable {
     }
 
     public int hashCode() {
-        if (id == null) return Util.generateUUID().hashCode(); // random(ish) so we dont get two users with no uuid equals! :/
+        if (id == null) return Util.generateUUID().hashCode();
         return id.hashCode();
     }
 }

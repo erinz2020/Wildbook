@@ -362,4 +362,17 @@ public class Embedding implements java.io.Serializable {
         st += " " + Util.prettyPrintDateTime(this.created);
         return st;
     }
+
+    public boolean equals(final Object o2) {
+        if (o2 == null) return false;
+        if (!(o2 instanceof Embedding)) return false;
+        Embedding two = (Embedding)o2;
+        if ((this.id == null) || (two == null) || (two.getId() == null)) return false;
+        return this.id.equals(two.getId());
+    }
+
+    public int hashCode() {
+        if (id == null) return Util.generateUUID().hashCode();
+        return id.hashCode();
+    }
 }
