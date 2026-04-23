@@ -64,14 +64,22 @@ java.util.Properties" %>
 	private String niceJson(JSONObject j) {
 		if (j == null) return format(null, "none");
 		//return "<pre class=\"json\">" + j.toString().replaceAll(",", ",\n") + "</pre>";
-		return "<pre class=\"json\">" + j.toString(3) + "</pre>";
+		return "<pre class=\"json\">" + noHtml(j.toString(3)) + "</pre>";
 	}
 
 	private String niceJson(JSONArray j) {
 		if (j == null) return format(null, "none");
 		//return "<pre class=\"json\">" + j.toString().replaceAll(",", ",\n") + "</pre>";
-		return "<pre class=\"json\">" + j.toString(3) + "</pre>";
+		return "<pre class=\"json\">" + noHtml(j.toString(3)) + "</pre>";
 	}
+
+        // marks up stuff like '<null>'
+        private String noHtml(String h) {
+            if (h == null) return h;
+            h = h.replaceAll("<", "&lt;");
+            h = h.replaceAll(">", "&gt;");
+            return h;
+        }
 
 	private String showEncounter(Encounter enc, HttpServletRequest req) {
 		if (enc == null) return "<b>[none]</b>";
@@ -265,6 +273,7 @@ java.util.Properties" %>
         h += "<li>parameters: " + niceJson(task.getParameters()) + "</li>";
         h += "<li>detectionStatusSummary: " + niceJson(new JSONObject(task.detectionStatusSummary())) + "</li>";
         h += "<li>identificationStatusSummary: " + niceJson(new JSONObject(task.identificationStatusSummary())) + "</li>";
+        h += "<li>statusDetails: " + niceJson(task.getStatusDetails()) + "</li>";
         h += "<li><a target=\"_new\" href=\"iaResults.jsp?taskId=" + task.getId() + "\">iaResults</a></li>";
         h += "<li><a target=\"_new\" href=\"ia?v2&includeChildren&taskId=" + task.getId() + "\">JSON task tree</a></li>";
         h += "</ul>";
