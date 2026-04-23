@@ -60,7 +60,8 @@ public class SiteSettings extends ApiBase {
             settings.put("siteDescription", CommonConfiguration.getHTMLDescription(context));
             settings.put("siteKeywords", CommonConfiguration.getHTMLKeywords(context));
             settings.put("siteAuthor", CommonConfiguration.getHTMLAuthor(context));
-            settings.put("spotMappingEnabled", CommonConfiguration.useSpotPatternRecognition(context));
+            settings.put("spotMappingEnabled",
+                CommonConfiguration.useSpotPatternRecognition(context));
             settings.put("locationData", LocationID.getLocationIDStructure());
 
             settings.put("mapCenterLat", CommonConfiguration.getCenterLat(context));
@@ -129,6 +130,7 @@ public class SiteSettings extends ApiBase {
                 try {
                     for (String iaClass : iaConfig.getValidIAClasses(tx)) {
                         for (JSONObject idOpt : iaConfig.identOpts(tx, iaClass)) {
+                            idOpt.remove("api_endpoint"); // dont want this shown
                             String key = idOpt.toString();
                             if (identConfigs.containsKey(key)) {
                                 identConfigs.get(key).getJSONArray("_iaClasses").put(iaClass);
@@ -267,9 +269,10 @@ public class SiteSettings extends ApiBase {
                 Util.booleanNotFalse(CommonConfiguration.getProperty("showClassicEncounters",
                     context))
                 );
-                
+
             settings.put("showHowToPhotograph",
-                Util.booleanNotFalse(CommonConfiguration.getProperty("showHowToPhotograph", context))
+                Util.booleanNotFalse(CommonConfiguration.getProperty("showHowToPhotograph",
+                    context))
                 );
 
             Properties recaptchaProps = ShepherdProperties.getProperties("recaptcha.properties", "",
