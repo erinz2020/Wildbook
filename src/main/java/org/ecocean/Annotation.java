@@ -1598,24 +1598,16 @@ public class Annotation extends Base implements java.io.Serializable {
                     foundTrivial + " (and Feature) from " + ma + " and " + enc);
             }
         }
-        // try to get embedding
-        try {
-            ann.extractEmbeddings(txStr, myShepherd);
-        } catch (Exception ex) {
-            System.out.println("Annotation.createFromApi(): embedding failed for " + ann + ": " +
-                ex);
-        }
-        // send to IA as needed
-        try {
-            if (ma.getAcmId() == null) {
-                ArrayList<MediaAsset> mas = new ArrayList<MediaAsset>();
-                mas.add(ma);
-                IBEISIA.sendMediaAssetsNew(mas, context);
-            }
-            ArrayList<Annotation> anns = new ArrayList<Annotation>();
-            anns.add(ann);
-            IBEISIA.sendAnnotationsNew(anns, context, myShepherd);
-        } catch (Exception ex) {} // silently fail; they will be synced up later
+
+        // we queue for embedding extraction so this is done in the background
+        // and frees up foreground api process to return results to user
+        // TODO myShepherd commit doesnt happen until we return; potential race condition on IA queue?
+        Task task = new Task();
+        task.addObject(ann);
+        task.setStatusDetailsAddLog("Annotation.createFromApi() embedding extraction on " + ann);
+        myShepherd.getPM().makePersistent(task);
+        System.out.println("[INFO] Annotation.createFromApi(): queueing for embedding extraction with " + task);
+        ann.queueForEmbeddingExtraction(task, myShepherd);
         return ann;
     }
 
