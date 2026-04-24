@@ -130,7 +130,7 @@ public class SiteSettings extends ApiBase {
                 try {
                     for (String iaClass : iaConfig.getValidIAClasses(tx)) {
                         for (JSONObject idOpt : iaConfig.identOpts(tx, iaClass)) {
-                            idOpt.remove("api_endpoint"); // dont want this shown
+                            // idOpt.remove("api_endpoint"); // dont want this shown
                             String key = idOpt.toString();
                             if (identConfigs.containsKey(key)) {
                                 identConfigs.get(key).getJSONArray("_iaClasses").put(iaClass);
