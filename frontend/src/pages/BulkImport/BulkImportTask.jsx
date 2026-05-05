@@ -16,7 +16,7 @@ import InfoAccordion from "../../components/InfoAccordion";
 import SimpleDataTable from "../../components/SimpleDataTable";
 import { Modal } from "react-bootstrap";
 import { Suspense, lazy } from "react";
-import useGetSiteSettings from "../../models/useGetSiteSettings";
+import { useSiteSettings } from "../../SiteSettingsContext";
 import axios from "axios";
 import MainButton from "../../components/MainButton";
 import convertToTreeData from "../../utils/converToTreeData";
@@ -31,9 +31,10 @@ const BulkImportTask = observer(() => {
   const [showError, setShowError] = useState(false);
   const taskId = new URLSearchParams(window.location.search).get("id");
   const { task, isLoading, error, refetch } = useGetBulkImportTask(taskId);
-  const { data: siteData } = useGetSiteSettings();
+  const { data: siteData } = useSiteSettings();
   const [userRoles, setUserRoles] = useState(null);
   const store = useLocalObservable(() => new BulkImportTaskStore());
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
   const previousLocationID = task?.matchingLocations || [];
 
@@ -207,7 +208,7 @@ const BulkImportTask = observer(() => {
       cell: (row) => {
         const arr = row.class;
         if (Array.isArray(arr) && arr.length === 3) {
-          const link = `/iaResults.jsp?taskId=${arr[0]}`;
+          const link = `/react/match-results?taskId=${arr[0]}`;
           return (
             <a href={link} target="_blank" rel="noreferrer">
               {arr[2]} {": "}
@@ -405,7 +406,33 @@ const BulkImportTask = observer(() => {
           />
         </div>
 
-        <SimpleDataTable columns={columns} data={sortedTableData} />
+        <div className="mb-2">
+          <label>
+            <h6 className="mb-2">
+              <FormattedMessage
+                id="RESULTS_PER_PAGE"
+                defaultMessage="Results per page"
+              />
+            </h6>
+
+            <select
+              value={rowsPerPage}
+              onChange={(e) => setRowsPerPage(Number(e.target.value))}
+            >
+              <option value={10}>10</option>
+              <option value={25}>25</option>
+              <option value={50}>50</option>
+              <option value={100}>100</option>
+              <option value={250}>250</option>
+              <option value={sortedTableData.length}>All</option>
+            </select>
+          </label>
+        </div>
+        <SimpleDataTable
+          columns={columns}
+          data={sortedTableData}
+          perPage={rowsPerPage}
+        />
       </section>
 
       <Row>
