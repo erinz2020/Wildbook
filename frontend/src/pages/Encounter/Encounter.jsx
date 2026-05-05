@@ -57,6 +57,9 @@ const Encounter = observer(() => {
   const encounterStatesOptions = encounterStatesLoaded
     ? encounterStates.map((state) => ({ value: state, label: state }))
     : [{ value: "loading", label: "loading" }];
+
+	console.log("testing claude");
+
   const rawState = store.encounterData?.state || "";
   const selectedState = !encounterStatesLoaded
     ? "loading"
