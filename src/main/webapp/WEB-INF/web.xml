@@ -94,6 +94,8 @@
 				/api/v3/bulk-import/** = authc
 				/api/v3/bulk-export = authc
 				/api/v3/bulk-export/** = authc
+				/api/v3/user-activity = authc
+				/api/v3/user-profile = authc
 
 				# ===== Appadmin =====
 				/appadmin/dataIntegrity.jsp = authc
@@ -413,6 +415,26 @@
 	<servlet-mapping>
 		<servlet-name>ApiUserHome</servlet-name>
 		<url-pattern>/api/v3/home</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>ApiUserActivity</servlet-name>
+		<servlet-class>org.ecocean.api.UserActivity</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>ApiUserActivity</servlet-name>
+		<url-pattern>/api/v3/user-activity</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>ApiUserProfile</servlet-name>
+		<servlet-class>org.ecocean.api.UserProfile</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>ApiUserProfile</servlet-name>
+		<url-pattern>/api/v3/user-profile</url-pattern>
 	</servlet-mapping>
 
 	<servlet>
